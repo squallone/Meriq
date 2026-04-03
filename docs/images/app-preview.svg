@@ -1,0 +1,83 @@
+<svg width="1600" height="980" viewBox="0 0 1600 980" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="180" y1="120" x2="1440" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F6EEE2"/>
+      <stop offset="1" stop-color="#E8DAC3"/>
+    </linearGradient>
+    <linearGradient id="hero" x1="220" y1="120" x2="1420" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1C7B85"/>
+      <stop offset="1" stop-color="#184654"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#FFFDF9"/>
+      <stop offset="1" stop-color="#F4EBDD"/>
+    </linearGradient>
+    <filter id="shadow" x="110" y="70" width="1380" height="840" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#503321" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="980" fill="url(#bg)"/>
+  <circle cx="280" cy="210" r="180" fill="#F8BE7A" fill-opacity="0.26"/>
+  <circle cx="1320" cy="760" r="150" fill="#7CCFCF" fill-opacity="0.22"/>
+
+  <g filter="url(#shadow)">
+    <rect x="150" y="100" width="1300" height="780" rx="34" fill="#FFF9F0"/>
+    <rect x="150" y="100" width="1300" height="780" rx="34" stroke="#D7C5AE"/>
+  </g>
+
+  <rect x="150" y="100" width="1300" height="86" rx="34" fill="#F8F1E5"/>
+  <path d="M150 152C150 123.281 173.281 100 202 100H1398C1426.72 100 1450 123.281 1450 152V186H150V152Z" fill="#F8F1E5"/>
+  <circle cx="192" cy="143" r="8" fill="#F17964"/>
+  <circle cx="218" cy="143" r="8" fill="#F5C056"/>
+  <circle cx="244" cy="143" r="8" fill="#67C26D"/>
+
+  <text x="290" y="145" fill="#2B1E14" font-family="SF Pro Display, Helvetica, Arial, sans-serif" font-size="30" font-weight="700">Meriq</text>
+  <text x="290" y="172" fill="#6A5C51" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="16">Paste Mermaid syntax, preview the diagram, then copy or export what you need.</text>
+
+  <g>
+    <rect x="1010" y="122" width="116" height="40" rx="20" fill="#EFE3D3" stroke="#DAC5AC"/>
+    <text x="1035" y="148" fill="#3C2B1F" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">Load Sample</text>
+
+    <rect x="1142" y="122" width="118" height="40" rx="20" fill="#EFE3D3" stroke="#DAC5AC"/>
+    <text x="1169" y="148" fill="#3C2B1F" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">Paste Source</text>
+
+    <rect x="1278" y="122" width="110" height="40" rx="20" fill="#0F6F78"/>
+    <text x="1314" y="148" fill="#FFF8EE" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="15" font-weight="700">Render</text>
+  </g>
+
+  <text x="200" y="245" fill="#2B1E14" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="24" font-weight="700">Mermaid</text>
+  <text x="822" y="245" fill="#2B1E14" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="24" font-weight="700">Preview</text>
+
+  <rect x="190" y="265" width="570" height="495" rx="28" fill="#FFFCF7" stroke="#D8C7B1"/>
+  <rect x="810" y="265" width="600" height="495" rx="28" fill="url(#panel)" stroke="#D8C7B1"/>
+
+  <text x="230" y="330" fill="#4F463E" font-family="SF Mono, Menlo, Consolas, monospace" font-size="24">flowchart LR</text>
+  <text x="230" y="372" fill="#4F463E" font-family="SF Mono, Menlo, Consolas, monospace" font-size="24">    A[Paste Mermaid syntax] --&gt; B(Render in the app)</text>
+  <text x="230" y="414" fill="#4F463E" font-family="SF Mono, Menlo, Consolas, monospace" font-size="24">    B --&gt; C{Need to share it?}</text>
+  <text x="230" y="456" fill="#4F463E" font-family="SF Mono, Menlo, Consolas, monospace" font-size="24">    C --&gt;|Text| D[Copy source]</text>
+  <text x="230" y="498" fill="#4F463E" font-family="SF Mono, Menlo, Consolas, monospace" font-size="24">    C --&gt;|Vector| E[Copy SVG]</text>
+  <text x="230" y="540" fill="#4F463E" font-family="SF Mono, Menlo, Consolas, monospace" font-size="24">    C --&gt;|Image| F[Copy rendered image]</text>
+
+  <rect x="236" y="604" width="268" height="48" rx="24" fill="#F7BE76" fill-opacity="0.18"/>
+  <text x="260" y="635" fill="#8E5A2A" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="18" font-weight="600">Monospaced editor for Mermaid text</text>
+
+  <rect x="860" y="300" width="248" height="34" rx="17" fill="#DCF0E7"/>
+  <text x="905" y="323" fill="#356650" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1">RENDERED MERMAID DIAGRAM</text>
+
+  <path d="M969 448L1098 378" stroke="#6B7F86" stroke-width="20" stroke-linecap="round"/>
+  <path d="M969 448L1098 526" stroke="#6B7F86" stroke-width="20" stroke-linecap="round"/>
+
+  <rect x="882" y="410" width="176" height="82" rx="30" fill="#F8BE7A"/>
+  <path d="M1142 338L1200 396L1142 454L1084 396L1142 338Z" fill="#98E0D4"/>
+  <rect x="1080" y="486" width="190" height="82" rx="30" fill="#F58C7A"/>
+
+  <text x="915" y="462" fill="#533620" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="20" font-weight="700">Paste syntax</text>
+  <text x="1101" y="401" fill="#25564B" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="20" font-weight="700">Share?</text>
+  <text x="1117" y="538" fill="#6D2F27" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="20" font-weight="700">Copy image</text>
+
+  <rect x="190" y="790" width="1220" height="54" rx="18" fill="#FAF4EA" stroke="#D8C7B1"/>
+  <circle cx="220" cy="817" r="7" fill="#5CBF74"/>
+  <text x="240" y="823" fill="#6D6258" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="18">Diagram rendered successfully.</text>
+  <text x="1020" y="823" fill="#8D8073" font-family="SF Pro Text, Helvetica, Arial, sans-serif" font-size="18">Copy and export actions live in the toolbar.</text>
+</svg>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Meriq Preview</title>
+    <script src="mermaid.min.js"></script>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif;
+            --page-start: #f5efe5;
+            --page-end: #ebe0cf;
+            --glow-one: rgba(249, 222, 201, 0.9);
+            --glow-two: rgba(196, 225, 255, 0.85);
+            --page-text: #24170f;
+            --canvas-background: rgba(255, 252, 246, 0.92);
+            --canvas-border: rgba(94, 57, 31, 0.14);
+            --canvas-shadow: rgba(97, 63, 36, 0.12);
+            --caption-background: rgba(67, 104, 80, 0.08);
+            --caption-text: #33503d;
+            --error-background: rgba(255, 236, 231, 0.92);
+            --error-border: rgba(153, 43, 28, 0.18);
+            --error-text: #992b1c;
+            --placeholder-background: rgba(255, 255, 255, 0.75);
+            --placeholder-border: rgba(63, 47, 32, 0.18);
+            --placeholder-text: rgba(36, 23, 15, 0.68);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 22px;
+            background:
+                radial-gradient(circle at top left, var(--glow-one), transparent 38%),
+                radial-gradient(circle at top right, var(--glow-two), transparent 35%),
+                linear-gradient(180deg, var(--page-start) 0%, var(--page-end) 100%);
+            color: var(--page-text);
+        }
+
+        .canvas {
+            min-height: calc(100vh - 44px);
+            border: 1px solid var(--canvas-border);
+            border-radius: 26px;
+            padding: 22px;
+            background: var(--canvas-background);
+            box-shadow: 0 18px 60px var(--canvas-shadow);
+        }
+
+        #error {
+            margin-top: 0;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid var(--error-border);
+            background: var(--error-background);
+            color: var(--error-text);
+            font-size: 13px;
+            white-space: pre-wrap;
+        }
+
+        #diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 520px;
+            padding: 10px 0 4px;
+            overflow: auto;
+        }
+
+        #diagram svg {
+            width: auto;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .placeholder {
+            max-width: 320px;
+            padding: 24px;
+            border: 1px dashed var(--placeholder-border);
+            border-radius: 22px;
+            background: var(--placeholder-background);
+            color: var(--placeholder-text);
+            text-align: center;
+            line-height: 1.55;
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas">
+        <div id="error" hidden></div>
+        <div id="diagram">
+            <div class="placeholder">Paste Mermaid syntax on the left, then press Render to preview and export the diagram.</div>
+        </div>
+    </div>
+
+    <script>
+        function postStatus(message, isError) {
+            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.mermaidStatus) {
+                window.webkit.messageHandlers.mermaidStatus.postMessage({ message, isError });
+            }
+        }
+
+        function setCSSVariable(name, value) {
+            document.documentElement.style.setProperty(name, value);
+        }
+
+        function applyPreviewPalette(theme) {
+            const preview = theme.preview;
+
+            setCSSVariable("--page-start", preview.pageStartColor);
+            setCSSVariable("--page-end", preview.pageEndColor);
+            setCSSVariable("--glow-one", preview.glowColorOne);
+            setCSSVariable("--glow-two", preview.glowColorTwo);
+            setCSSVariable("--page-text", preview.pageTextColor);
+            setCSSVariable("--canvas-background", preview.canvasBackground);
+            setCSSVariable("--canvas-border", preview.canvasBorderColor);
+            setCSSVariable("--canvas-shadow", preview.canvasShadowColor);
+            setCSSVariable("--caption-background", preview.captionBackground);
+            setCSSVariable("--caption-text", preview.captionTextColor);
+            setCSSVariable("--error-background", preview.errorBackground);
+            setCSSVariable("--error-border", preview.errorBorderColor);
+            setCSSVariable("--error-text", preview.errorTextColor);
+            setCSSVariable("--placeholder-background", preview.placeholderBackground);
+            setCSSVariable("--placeholder-border", preview.placeholderBorderColor);
+            setCSSVariable("--placeholder-text", preview.placeholderTextColor);
+        }
+
+        function buildMermaidConfiguration(theme) {
+            return {
+                startOnLoad: false,
+                securityLevel: "loose",
+                theme: "base",
+                themeVariables: {
+                    background: theme.diagram.background,
+                    primaryColor: theme.diagram.primaryColor,
+                    primaryTextColor: theme.diagram.primaryTextColor,
+                    primaryBorderColor: theme.diagram.primaryBorderColor,
+                    lineColor: theme.diagram.lineColor,
+                    secondaryColor: theme.diagram.secondaryColor,
+                    tertiaryColor: theme.diagram.tertiaryColor,
+                    fontFamily: theme.diagram.fontFamily
+                },
+                flowchart: {
+                    curve: "bumpX"
+                }
+            };
+        }
+
+        function numericValue(value) {
+            if (value == null) {
+                return null;
+            }
+
+            const parsed = Number.parseFloat(String(value).replace(/[^\d.-]/g, ""));
+            return Number.isFinite(parsed) ? parsed : null;
+        }
+
+        function svgDimensions(svgElement) {
+            const width = numericValue(svgElement.getAttribute("width"));
+            const height = numericValue(svgElement.getAttribute("height"));
+            const viewBox = svgElement.getAttribute("viewBox");
+
+            if (viewBox) {
+                const parts = viewBox.trim().split(/\s+/).map(Number);
+
+                if (parts.length === 4 && parts.every(Number.isFinite)) {
+                    return {
+                        x: parts[0],
+                        y: parts[1],
+                        width: width ?? parts[2],
+                        height: height ?? parts[3]
+                    };
+                }
+            }
+
+            return {
+                x: 0,
+                y: 0,
+                width: width ?? 1000,
+                height: height ?? 600
+            };
+        }
+
+        function measuredBounds(svgMarkup) {
+            const mount = document.createElement("div");
+            mount.style.position = "absolute";
+            mount.style.left = "-100000px";
+            mount.style.top = "0";
+            mount.style.visibility = "hidden";
+            mount.style.pointerEvents = "none";
+            mount.innerHTML = svgMarkup;
+            document.body.appendChild(mount);
+
+            try {
+                const svgElement = mount.querySelector("svg");
+
+                if (!svgElement) {
+                    return null;
+                }
+
+                const measurementGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                const ignoredElements = new Set(["defs", "style", "title", "desc"]);
+
+                for (const child of Array.from(svgElement.childNodes)) {
+                    if (
+                        child.nodeType === Node.ELEMENT_NODE &&
+                        ignoredElements.has(child.nodeName.toLowerCase())
+                    ) {
+                        continue;
+                    }
+
+                    measurementGroup.appendChild(child.cloneNode(true));
+                }
+
+                if (!measurementGroup.childNodes.length) {
+                    return null;
+                }
+
+                svgElement.appendChild(measurementGroup);
+
+                if (typeof measurementGroup.getBBox !== "function") {
+                    measurementGroup.remove();
+                    return null;
+                }
+
+                const bbox = measurementGroup.getBBox();
+                measurementGroup.remove();
+
+                if (!Number.isFinite(bbox.width) || !Number.isFinite(bbox.height) || bbox.width <= 0 || bbox.height <= 0) {
+                    return null;
+                }
+
+                return {
+                    x: bbox.x,
+                    y: bbox.y,
+                    width: bbox.width,
+                    height: bbox.height
+                };
+            } finally {
+                mount.remove();
+            }
+        }
+
+        function normalizeSVG(svgMarkup, padding, backgroundColor) {
+            const parser = new DOMParser();
+            const documentRoot = parser.parseFromString(svgMarkup, "image/svg+xml");
+            const svgElement = documentRoot.documentElement;
+            const dimensions = measuredBounds(svgMarkup) || svgDimensions(svgElement);
+            const exportPadding = Math.max(0, Number(padding || 0));
+
+            const totalWidth = dimensions.width + exportPadding * 2;
+            const totalHeight = dimensions.height + exportPadding * 2;
+
+            const group = documentRoot.createElementNS("http://www.w3.org/2000/svg", "g");
+            group.setAttribute("transform", `translate(${exportPadding - dimensions.x} ${exportPadding - dimensions.y})`);
+
+            while (svgElement.firstChild) {
+                group.appendChild(svgElement.firstChild);
+            }
+
+            if (backgroundColor) {
+                const rect = documentRoot.createElementNS("http://www.w3.org/2000/svg", "rect");
+                rect.setAttribute("x", "0");
+                rect.setAttribute("y", "0");
+                rect.setAttribute("width", String(totalWidth));
+                rect.setAttribute("height", String(totalHeight));
+                rect.setAttribute("fill", backgroundColor);
+                svgElement.appendChild(rect);
+            }
+
+            svgElement.appendChild(group);
+            svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            svgElement.setAttribute("width", String(totalWidth));
+            svgElement.setAttribute("height", String(totalHeight));
+            svgElement.setAttribute("viewBox", `0 0 ${totalWidth} ${totalHeight}`);
+            svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
+            svgElement.removeAttribute("style");
+
+            const serializer = new XMLSerializer();
+            return {
+                svg: serializer.serializeToString(svgElement),
+                width: totalWidth,
+                height: totalHeight
+            };
+        }
+
+        async function renderSVG(source, theme, options) {
+            mermaid.initialize(buildMermaidConfiguration(theme));
+
+            const renderId = `mermaid-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+            const { svg, bindFunctions } = await mermaid.render(renderId, source);
+            const backgroundColor = options.background && options.background.isTransparent ? null : options.background && options.background.colorHex;
+            const normalized = normalizeSVG(svg, options.padding, backgroundColor);
+
+            return {
+                svg: normalized.svg,
+                width: normalized.width,
+                height: normalized.height,
+                bindFunctions
+            };
+        }
+
+        async function loadSVGImage(svgMarkup) {
+            const image = new Image();
+            image.decoding = "async";
+
+            const source = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgMarkup)}`;
+
+            await new Promise((resolve, reject) => {
+                image.onload = () => resolve();
+                image.onerror = () => reject(new Error("WebKit could not load the rendered SVG into an image for PNG export."));
+                image.src = source;
+            });
+
+            return image;
+        }
+
+        async function svgToPNGDataURL(svgMarkup, width, height, scale) {
+            const image = await loadSVGImage(svgMarkup);
+            const outputScale = Math.max(1, Number(scale || 1));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.ceil(width * outputScale);
+            canvas.height = Math.ceil(height * outputScale);
+
+            const context = canvas.getContext("2d");
+
+            if (!context) {
+                throw new Error("WebKit could not create a canvas context for PNG export.");
+            }
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.setTransform(outputScale, 0, 0, outputScale, 0, 0);
+            context.drawImage(image, 0, 0, width, height);
+
+            try {
+                return canvas.toDataURL("image/png");
+            } catch (error) {
+                const message = error && error.message ? error.message : String(error);
+                throw new Error(`PNG export failed while encoding canvas output: ${message}`);
+            }
+        }
+
+        window.renderPreview = async function (payload) {
+            const diagram = document.getElementById("diagram");
+            const errorBox = document.getElementById("error");
+
+            applyPreviewPalette(payload.theme);
+
+            errorBox.hidden = true;
+            errorBox.textContent = "";
+            diagram.innerHTML = '<div class="placeholder">Rendering diagram...</div>';
+
+            try {
+                const result = await renderSVG(payload.source, payload.theme, {
+                    background: { isTransparent: true, colorHex: null },
+                    padding: payload.padding
+                });
+
+                diagram.innerHTML = result.svg;
+
+                if (typeof result.bindFunctions === "function") {
+                    result.bindFunctions(diagram);
+                }
+
+                postStatus(`Diagram rendered successfully with the ${payload.theme.name} theme.`, false);
+                return true;
+            } catch (error) {
+                const message = error && error.message ? error.message : String(error);
+                diagram.innerHTML = "";
+                errorBox.textContent = message;
+                errorBox.hidden = false;
+                postStatus(message, true);
+                throw error;
+            }
+        };
+
+        window.exportSVG = async function (payload) {
+            const result = await renderSVG(payload.source, payload.theme, {
+                background: payload.background,
+                padding: payload.padding
+            });
+
+            return {
+                svg: result.svg,
+                width: result.width,
+                height: result.height
+            };
+        };
+
+        window.exportPNG = async function (payload) {
+            try {
+                const svgExport = await window.exportSVG(payload);
+                const dataURL = await svgToPNGDataURL(svgExport.svg, svgExport.width, svgExport.height, payload.scale);
+
+                return {
+                    dataURL,
+                    width: svgExport.width * Math.max(1, Number(payload.scale || 1)),
+                    height: svgExport.height * Math.max(1, Number(payload.scale || 1))
+                };
+            } catch (error) {
+                const message = error && error.message ? error.message : String(error);
+                postStatus(message, true);
+                throw new Error(message);
+            }
+        };
+    </script>
+</body>
+</html>
