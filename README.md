@@ -1,10 +1,10 @@
 # Meriq
 
-![Meriq app icon](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/Resources/Assets.xcassets/AppIcon.appiconset/appicon_512.png)
+<img width="128" height="128" alt="appicon_128" src="https://github.com/user-attachments/assets/8a019a91-175e-43ab-98df-9c820f743b36" />
 
 Meriq is a local-first Mermaid studio for macOS. It combines a real diagram library, a native SwiftUI workspace, and a WebKit-based Mermaid preview so diagrams can be organized, edited, rendered, and exported without leaving the app.
 
-![Meriq app preview](/Users/admin/Documents/Projects/iOS/Meriq/docs/images/app-preview.svg)
+<img width="1845" height="1522" alt="image" src="https://github.com/user-attachments/assets/0eeebb02-70ac-451c-bc21-a8a6ed88ef62" />
 
 ## Highlights
 
