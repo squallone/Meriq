@@ -1,71 +1,78 @@
 # Architecture
 
-This document describes the current Meriq studio architecture after the persistence, navigation, inspector, export, and Midnight UI refactors.
+This document describes the current Meriq app architecture, with a focus on persistence, state ownership, rendering, and the boundaries between them.
 
-## Overview
+## Principles
 
-Meriq is a local-library-first macOS app with three major layers:
+The app is organized around a few simple rules:
 
-- persistence: SwiftData entities and repository implementations
-- state: app-facing stores that own selection, drafts, autosave, and UI state
-- presentation: SwiftUI views for the sidebar, workspace, preview, inspector, popovers, and sheets
+- SwiftData is the source of truth for the library
+- views render store state instead of talking to persistence directly
+- the renderer is responsible for rendering and export, not document ownership
+- UI-specific behavior such as sidebar expansion, preview tool state, and document panel state lives in stores
 
-The goal is to keep persistence details out of most views and make the app easy to extend for future features like drag-and-drop, templates, smart lists, and deeper export options.
+The goal is to keep the app easy to evolve without mixing persistence, rendering, and view concerns together.
 
-## Persistence Layer
+## Layer Overview
 
-SwiftData is the source of truth.
+Meriq has four main layers:
 
-Entity types:
+1. Persistence
+2. Repository
+3. State
+4. Presentation and rendering
+
+### Persistence
+
+Persistence is implemented with SwiftData in:
+
+- [StudioPersistence.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/StudioPersistence.swift)
+
+Persisted entities:
 
 - `CategoryEntity`
 - `DiagramEntity`
 
-Stored concepts:
+Stored fields cover:
 
-- categories with icon, optional tint, ordering, and timestamps
-- diagrams with name, Mermaid source, theme, background mode, favorite state, recents metadata, ordering, and timestamps
+- category name, icon, tint, sort order, timestamps
+- diagram name, Mermaid source, theme, background mode, favorite state, recents metadata, sort order, timestamps
 
-Important rules:
+Important modeling rules:
 
 - categories are single-level
-- `sortOrder` is explicit for both categories and diagrams
-- deleting a category moves diagrams to uncategorized rather than deleting them
-- `Recents`, `Favorites`, `Templates`, and `All Diagrams` are derived UI scopes, not persisted category records
-- `Uncategorized` is a special scope, not a persisted system category
+- `sortOrder` is explicit for categories and diagrams
+- deleting a category moves diagrams into uncategorized
+- `Recents`, `Favorites`, `Templates`, and `All Diagrams` are derived scopes, not persisted categories
+- `Uncategorized` is a special scope, not a system record
 
-Implementation files:
+### Repository
 
-- [StudioPersistence.swift](../Sources/Meriq/StudioPersistence.swift)
-- [StudioRepositories.swift](../Sources/Meriq/StudioRepositories.swift)
+Repositories translate between SwiftData and app-facing models.
 
-## Repository Layer
+Implementation:
 
-The repository layer isolates storage access from the rest of the app.
+- [StudioRepositories.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/StudioRepositories.swift)
 
 Protocols:
 
 - `CategoryRepository`
 - `DiagramRepository`
 
-Concrete implementations:
-
-- `SwiftDataCategoryRepository`
-- `SwiftDataDiagramRepository`
-
 Responsibilities:
 
-- fetch and map persisted entities into domain models
-- perform CRUD operations
-- maintain deterministic ordering
-- seed first-run sample content
-- keep SwiftData-specific fetch/save details out of stores and views
+- fetch and map entities into plain models
+- create, update, reorder, and delete categories and diagrams
+- hide SwiftData fetch/save details from the rest of the app
+- seed initial sample data on first launch
 
-## Domain Models
+### Domain Models
 
-Plain app-facing models live in [StudioModels.swift](../Sources/Meriq/StudioModels.swift).
+App-facing types live in:
 
-Key types:
+- [StudioModels.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/StudioModels.swift)
+
+Key types include:
 
 - `Category`
 - `Diagram`
@@ -73,170 +80,179 @@ Key types:
 - `SidebarSelection`
 - `DiagramScope`
 - `WorkspaceMode`
+- `PreviewToolMode`
+- `DiagramPreviewZoomState`
 - `MermaidExportConfiguration`
 - `SidebarDiagramSection`
 
-This keeps most UI logic away from SwiftData types.
+These types allow most UI code to stay independent of SwiftData model types.
 
-## State Layer
+## State Ownership
+
+State is split between two stores.
+
+Implementation:
+
+- [StudioStores.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/StudioStores.swift)
 
 ### `LibraryStore`
 
-`LibraryStore` owns library-level state and interactions.
+`LibraryStore` owns library navigation and browse state.
 
-Main responsibilities:
+Responsibilities:
 
-- current sidebar selection
+- current sidebar scope
 - expanded inline browser section
 - search text
-- category list
-- visible diagram list for the current scope
-- selected diagram identity
-- category CRUD
-- diagram list CRUD and movement
-- reloads after repository mutations
-
-It also builds grouped sidebar sections for:
-
-- all diagrams
-- recents
-- favorites
-- uncategorized
-- user categories
+- categories
+- visible diagrams for the active scope
+- selected diagram id
+- category CRUD flows
+- diagram movement and deletion flows
+- regrouping sidebar sections after mutations
 
 ### `EditorStore`
 
-`EditorStore` owns the active document state.
+`EditorStore` owns the active document and preview-adjacent state.
 
-Main responsibilities:
+Responsibilities:
 
 - current `DiagramDraft`
 - selected category for the draft
-- workspace mode: editor, split, preview
+- workspace mode
+- document panel collapse and resize state
+- export configuration
+- preview zoom state
+- preview tool mode and keyboard zoom-session state
 - autosave scheduling and flush behavior
-- content, name, theme, and background updates
-- copy/paste convenience actions
-- delegating preview and export work to `MermaidRenderer`
+- source/name/theme/background updates
+- copy/paste helpers
+- renderer coordination
 
 Autosave behavior:
 
-- edits update the draft immediately
-- autosave runs on a debounce
-- autosave also flushes on selection changes and scene transitions
+- draft updates happen immediately
+- persistence is debounced
+- autosave is flushed on selection change and scene transitions
 
-Implementation file:
+## Rendering And Export
 
-- [StudioStores.swift](../Sources/Meriq/StudioStores.swift)
-
-## Rendering Layer
-
-Rendering is intentionally separate from persistence.
+Rendering is separated from document ownership.
 
 ### `MermaidRenderer`
 
-`MermaidRenderer` owns:
+Implementation:
 
-- current renderable draft snapshot
-- status reporting
-- preview rendering
-- clipboard copy actions
-- file export actions
+- [MermaidRenderer.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/MermaidRenderer.swift)
 
-It does not own the source-of-truth document model.
+Responsibilities:
+
+- hold the current renderable draft snapshot
+- render preview content
+- copy/export SVG and PNG
+- report render/export status back to stores
+
+It does not own the source-of-truth draft.
 
 ### `MermaidRenderEngine`
 
-`MermaidRenderEngine` is the low-level bridge to a `WKWebView` and the bundled Mermaid HTML shell.
+Implementation:
 
-It is responsible for:
+- [MermaidRenderEngine.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/MermaidRenderEngine.swift)
 
-- loading the local preview shell
-- executing async JavaScript render/export functions
-- receiving status callbacks from the web page
-- reloading the shell if the web content process terminates
+Responsibilities:
 
-Implementation files:
+- host the `WKWebView`
+- load the bundled Mermaid HTML shell
+- run preview/export JavaScript
+- receive status callbacks from the page
+- forward preview edit requests back into Swift
+- recover when the WebKit content process reloads
 
-- [MermaidRenderer.swift](../Sources/Meriq/MermaidRenderer.swift)
-- [MermaidRenderEngine.swift](../Sources/Meriq/MermaidRenderEngine.swift)
-- [index.html](../Sources/Meriq/Resources/index.html)
+### Mermaid Shell
+
+Bundled web resources live in:
+
+- [index.html](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/Resources/index.html)
+- [mermaid.min.js](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/Resources/mermaid.min.js)
+
+## Bidirectional Preview Editing
+
+Meriq includes a first pass at preview-to-source editing.
+
+Implementation:
+
+- [MermaidSourceEditing.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/MermaidSourceEditing.swift)
+
+Current design:
+
+- Swift remains the source of truth
+- the preview emits structured edit requests
+- the source editing engine maps requests back into Mermaid source
+- the editor draft is updated, re-rendered, and autosaved through normal paths
+
+Current supported cases are intentionally scoped:
+
+- flowchart node labels
+- flowchart edge labels
+
+This keeps the architecture scalable as more Mermaid syntaxes are added later.
 
 ## UI Composition
 
-The app uses a two-column `NavigationSplitView`:
+Main SwiftUI composition lives in:
 
-- sidebar: library navigation and inline diagram browser
-- detail: main workspace
+- [StudioViews.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/StudioViews.swift)
 
-Inside the detail area:
-
-- editor-only mode shows the editor
-- split mode shows editor plus preview/document column
-- preview mode shows the preview/document column only
-
-Primary views:
+Top-level structure:
 
 - `RootStudioView`
 - `StudioSidebarView`
 - `StudioWorkspaceContainer`
 - `MermaidEditorView`
+- `PreviewDetailColumn`
 - `MermaidPreviewPane`
+- `DocumentBottomPanel`
 - `DocumentInspectorView`
 - `ExportPopoverView`
 - `CategoryEditorSheet`
 
-Implementation file:
+The app uses a `NavigationSplitView` with:
 
-- [StudioViews.swift](../Sources/Meriq/StudioViews.swift)
+- a sidebar for navigation and inline browsing
+- a detail area for editor and preview work
 
-## Information Architecture
+The preview column gives priority to the preview surface, with document details in a collapsible and resizable bottom panel.
 
-The app now separates responsibilities more clearly:
+## Startup And Dependency Wiring
 
-- sidebar: navigation, search, selection, browse, quick diagram context menus
-- workspace header: create, render, copy, export, document actions
-- preview area: flexible primary rendering surface
-- document inspector: name, appearance, location, status
-- export popover: format, scale, copy/export actions
+Application setup happens in:
 
-This split keeps export settings out of the inspector while keeping document appearance where it belongs.
+- [MeriqApp.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/MeriqApp.swift)
 
-## Theme System
+Startup flow:
 
-Theme presets live in [MermaidConfiguration.swift](../Sources/Meriq/MermaidConfiguration.swift).
-
-Current built-in themes:
-
-- Midnight
-- Sand
-- Ocean
-- Graphite
-
-Midnight is the foundation for the app chrome and dark document presentation.
-
-## App Startup
-
-[MeriqApp.swift](../Sources/Meriq/MeriqApp.swift) builds the SwiftData container and wires dependencies:
-
-- create SwiftData schema and `ModelContainer`
-- initialize repositories with `container.mainContext`
+- build the SwiftData schema and `ModelContainer`
+- initialize repository implementations with `mainContext`
 - initialize `LibraryStore`
 - initialize `EditorStore`
-- inject both stores and the model container into the view tree
+- inject stores and model container into the SwiftUI tree
 
 ## Extension Points
 
 The current architecture is prepared for:
 
-- drag-and-drop reordering
-- additional smart lists
-- richer export configuration
-- metadata/tagging
-- sync or import/export features
-- tests around repositories and stores
+- drag-and-drop polish
+- richer smart lists
+- more preview tools
+- richer metadata
+- expanded export presets
+- import/export workflows
+- tests around repositories, stores, preview tools, and source editing
 
-Recommended pattern for future work:
+Recommended approach for future changes:
 
-- add persistence changes behind repositories first
-- keep UI derived from store state
-- avoid pushing document source-of-truth back into the renderer
+- add or adjust persistence behind repositories first
+- keep document state in stores
+- keep rendering logic in renderer/engine layers
+- avoid pushing source-of-truth state into the WebView layer

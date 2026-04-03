@@ -1,77 +1,121 @@
 # Meriq
 
-![Meriq app icon](Sources/Meriq/Resources/Assets.xcassets/AppIcon.appiconset/appicon_512.png)
+![Meriq app icon](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/Resources/Assets.xcassets/AppIcon.appiconset/appicon_512.png)
 
-Meriq is a local-first macOS Mermaid studio built with SwiftUI, SwiftData, and WebKit. It gives Mermaid diagrams a real library, a focused editor and preview workflow, and a native macOS UI for browsing, organizing, rendering, and exporting diagrams.
+Meriq is a local-first Mermaid studio for macOS. It combines a real diagram library, a native SwiftUI workspace, and a WebKit-based Mermaid preview so diagrams can be organized, edited, rendered, and exported without leaving the app.
 
-## Screenshot
+![Meriq app preview](/Users/admin/Documents/Projects/iOS/Meriq/docs/images/app-preview.svg)
 
-![Meriq app preview](docs/images/app-preview.svg)
+## Highlights
 
-## What The App Does
+- Local-first library backed by SwiftData
+- Categories with SF Symbol icons, color accents, and stable ordering
+- Named diagrams, favorites, recents, templates, and uncategorized files
+- Native macOS sidebar browsing with inline nested diagram lists
+- Editor, split, and preview workspace modes
+- Live Mermaid rendering in a bundled WebView preview
+- Bidirectional editing for supported preview labels back into Mermaid source
+- Contextual export flow for SVG and PNG
+- Midnight-themed studio UI built around preview-first workflows
 
-- Stores diagrams locally with SwiftData
-- Organizes diagrams into categories with icons and color tints
-- Supports named diagrams, favorites, recents, uncategorized files, and starter templates
-- Uses a nested sidebar browser instead of a permanently visible diagram list column
-- Provides editor, split view, and preview modes from the macOS toolbar
-- Renders Mermaid locally with a bundled WebKit-based preview shell
-- Lets users copy or export SVG and PNG from a contextual export popover
+## Why Meriq
 
-## Current UX Model
+Most Mermaid tools are either text editors with a basic preview or browser-based utilities with little document organization. Meriq is designed as a real desktop workspace:
 
-The app now follows a three-part studio model:
+- your diagrams live in a library, not in loose files or a single scratch buffer
+- browsing and editing are separated cleanly
+- export is contextual, not mixed into document settings
+- the preview is treated as a first-class canvas
 
-- Sidebar: library navigation, search, smart sections, categories, and inline diagram browsing
-- Workspace: the active editing surface and top-level document actions
-- Right column: preview plus document details
+## Current Feature Set
 
-Recent UX refinements include:
+### Library
 
-- removing the always-visible "All Diagrams" content column
-- moving diagram search into the sidebar
-- splitting document details from export configuration
-- moving export options into a dedicated `Export` popover
-- moving appearance controls back into the document area
-- simplifying the preview layout so the canvas is the primary flexible surface
-- aligning the Midnight theme across sidebar, preview, and document surfaces
+- Create, rename, move, favorite, and delete diagrams
+- Create, edit, reorder, and delete categories
+- Browse diagrams from `All Diagrams`, `Recents`, `Favorites`, `Templates`, `Uncategorized`, and category scopes
+- Search from the sidebar instead of a dedicated diagram column
 
-## Project Structure
+### Editing
 
-Top-level app files live in [Sources/Meriq](Sources/Meriq):
+- Edit Mermaid source in a monospaced editor
+- Rename diagrams inline from the workspace
+- Switch between `Editor`, `Split View`, and `Preview`
+- Use a collapsible and resizable bottom document panel
+- Update theme, dark document mode, background mode, and category assignment from the document panel
 
-- [MeriqApp.swift](Sources/Meriq/MeriqApp.swift): app bootstrap, SwiftData container setup, store wiring
-- [ContentView.swift](Sources/Meriq/ContentView.swift): lifecycle hooks and store synchronization
-- [StudioModels.swift](Sources/Meriq/StudioModels.swift): domain models, sidebar selection, workspace modes, templates
-- [StudioPersistence.swift](Sources/Meriq/StudioPersistence.swift): SwiftData entities and mapping helpers
-- [StudioRepositories.swift](Sources/Meriq/StudioRepositories.swift): repository protocols and SwiftData implementations
-- [StudioStores.swift](Sources/Meriq/StudioStores.swift): `LibraryStore` and `EditorStore`
-- [StudioViews.swift](Sources/Meriq/StudioViews.swift): sidebar, workspace, preview, inspector, popovers, sheets
-- [MermaidConfiguration.swift](Sources/Meriq/MermaidConfiguration.swift): Mermaid themes, preview palettes, export configuration models
-- [MermaidRenderEngine.swift](Sources/Meriq/MermaidRenderEngine.swift): low-level `WKWebView` shell and JS bridge
-- [MermaidRenderer.swift](Sources/Meriq/MermaidRenderer.swift): render/export orchestration for the selected draft
+### Preview
+
+- Render Mermaid locally in a bundled `WKWebView`
+- Edit supported labels directly from the preview and sync them back into source
+- Use keyboard-driven zoom tools and direct zoom controls in the preview header
+
+### Export
+
+- Copy Mermaid source
+- Copy SVG or rendered PNG
+- Export SVG or PNG from a dedicated export popover
+
+## Screens And UX Model
+
+Meriq follows a studio layout with three main areas:
+
+- Sidebar: navigation, search, smart scopes, categories, and inline diagram browsing
+- Workspace: editor and top-level document actions
+- Preview column: preview canvas plus the bottom document panel
+
+Notable UX decisions:
+
+- The old always-visible diagram list column is gone to reclaim space for editing and previewing.
+- Export settings are separated from document settings.
+- The preview stays visually primary, while document details live in a flexible bottom panel.
+- Midnight is the base visual system across sidebar, workspace, and preview surfaces.
 
 ## Architecture
 
-Meriq uses a repository-backed architecture:
+Meriq uses a repository-backed app architecture:
 
-- SwiftData is the source of truth for categories and diagrams
-- repositories isolate persistence details from UI code
-- `LibraryStore` owns library navigation, list state, sidebar expansion, category CRUD, diagram browsing, search, and selection
-- `EditorStore` owns the active document draft, autosave, theme/background changes, and renderer coordination
-- `MermaidRenderer` owns preview/export execution, but not the source of truth for the document
+- SwiftData is the source of truth
+- repositories isolate persistence details from views
+- `LibraryStore` owns navigation, browsing, CRUD, and selection
+- `EditorStore` owns the active draft, autosave, preview tool state, and renderer coordination
+- `MermaidRenderer` and `MermaidRenderEngine` handle rendering/export, not document ownership
 
-Detailed docs:
+Deeper documentation:
 
-- [Architecture and persistence](docs/architecture.md)
-- [UI and interaction model](docs/ui.md)
-- [Distribution and notarization](docs/distribution.md)
+- [Architecture](/Users/admin/Documents/Projects/iOS/Meriq/docs/architecture.md)
+- [UI and interaction model](/Users/admin/Documents/Projects/iOS/Meriq/docs/ui.md)
+- [Distribution notes](/Users/admin/Documents/Projects/iOS/Meriq/docs/distribution.md)
 
-## Build And Run
+## Project Layout
 
-Open `Meriq.xcodeproj` in Xcode and run the shared `Meriq` scheme.
+Main app sources live in [/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq):
 
-Build from Terminal:
+- [MeriqApp.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/MeriqApp.swift): app bootstrap and dependency wiring
+- [ContentView.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/ContentView.swift): lifecycle coordination
+- [StudioModels.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/StudioModels.swift): app-facing models and enums
+- [StudioPersistence.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/StudioPersistence.swift): SwiftData entities and mapping helpers
+- [StudioRepositories.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/StudioRepositories.swift): repository protocols and implementations
+- [StudioStores.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/StudioStores.swift): `LibraryStore` and `EditorStore`
+- [StudioViews.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/StudioViews.swift): sidebar, workspace, preview, panel, sheets, and popovers
+- [MermaidConfiguration.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/MermaidConfiguration.swift): themes, export configuration, preview request types
+- [MermaidRenderer.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/MermaidRenderer.swift): preview/export orchestration
+- [MermaidRenderEngine.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/MermaidRenderEngine.swift): WebKit bridge and Mermaid shell integration
+- [MermaidSourceEditing.swift](/Users/admin/Documents/Projects/iOS/Meriq/Sources/Meriq/MermaidSourceEditing.swift): preview-to-source editing support
+
+## Getting Started
+
+### Requirements
+
+- macOS 14 or later
+- Xcode 16 or newer
+- Swift 6 toolchain
+
+### Build In Xcode
+
+Open `Meriq.xcodeproj` and run the shared `Meriq` scheme.
+
+### Build From Terminal
 
 ```bash
 xcodebuild -project Meriq.xcodeproj \
@@ -81,39 +125,56 @@ xcodebuild -project Meriq.xcodeproj \
   build
 ```
 
-The built app is placed at:
+The built app will be available at:
 
 ```text
 .derivedData/Build/Products/Debug/Meriq.app
 ```
 
-The Swift package target also still builds:
+The Swift package target also builds:
 
 ```bash
 swift build
 ```
 
-## Project Scripts
+## Development Scripts
 
-Refresh the Xcode project after moving files:
+Regenerate the Xcode project after moving or adding source files:
 
 ```bash
 ruby Scripts/generate_xcodeproj.rb
 ```
 
-Regenerate the icon PNG set:
+Regenerate the app icon PNG set:
 
 ```bash
 swift Scripts/generate_app_icon.swift
 ```
 
+## Roadmap Ideas
+
+- Broader bidirectional editing beyond the current supported Mermaid label cases
+- Drag-and-drop ordering and movement polish
+- Reset zoom / fit-to-canvas preview actions
+- Richer metadata and tagging
+- Import/export workflows for Mermaid files
+- Tests around repositories, autosave, preview editing, and preview tools
+
 ## Contributing
 
-When making product changes:
+Contributions are welcome. When making changes:
 
-- keep the app local-first and easy to understand
-- prefer native macOS interaction patterns over custom complexity
-- preserve the separation between navigation, document state, and export state
-- update the docs when architecture or UX changes meaningfully
+- keep the app local-first
+- prefer native macOS interaction patterns over custom chrome
+- preserve the separation between library state, document state, and rendering
+- update docs when behavior or architecture changes
 
-When moving source files, regenerate the Xcode project with `ruby Scripts/generate_xcodeproj.rb`.
+If you move files, regenerate the Xcode project with:
+
+```bash
+ruby Scripts/generate_xcodeproj.rb
+```
+
+## Open Source Notes
+
+This repository does not currently include a license file, contribution guide, or code of conduct. If you plan to publish Meriq publicly, adding a `LICENSE`, `CONTRIBUTING.md`, and `CODE_OF_CONDUCT.md` would be a good next step.
