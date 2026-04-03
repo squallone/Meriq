@@ -77,6 +77,14 @@
             height: auto;
         }
 
+        #diagram svg [data-edit-token-id] {
+            cursor: text;
+        }
+
+        #diagram svg .is-editable-label:hover {
+            filter: brightness(1.08);
+        }
+
         .placeholder {
             max-width: 320px;
             padding: 24px;
@@ -86,6 +94,42 @@
             color: var(--placeholder-text);
             text-align: center;
             line-height: 1.55;
+        }
+
+        .preview-edit-popover {
+            position: fixed;
+            z-index: 9999;
+            min-width: 180px;
+            max-width: 420px;
+            padding: 10px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(15, 20, 28, 0.96);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(16px);
+        }
+
+        .preview-edit-popover input {
+            width: 100%;
+            margin: 0;
+            padding: 10px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #eef5ff;
+            font: 13px/1.3 "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif;
+            outline: none;
+        }
+
+        .preview-edit-popover input:focus {
+            border-color: rgba(94, 213, 182, 0.55);
+            box-shadow: 0 0 0 3px rgba(94, 213, 182, 0.14);
+        }
+
+        .preview-edit-hint {
+            margin-top: 8px;
+            color: rgba(231, 237, 247, 0.62);
+            font-size: 11px;
         }
     </style>
 </head>
@@ -98,9 +142,19 @@
     </div>
 
     <script>
+        let previewEditPopover = null;
+        let previewEditInput = null;
+        let currentEditableBindings = [];
+
         function postStatus(message, isError) {
             if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.mermaidStatus) {
                 window.webkit.messageHandlers.mermaidStatus.postMessage({ message, isError });
+            }
+        }
+
+        function postPreviewEdit(tokenID, newText) {
+            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.mermaidPreviewEdit) {
+                window.webkit.messageHandlers.mermaidPreviewEdit.postMessage({ tokenID, newText });
             }
         }
 
@@ -128,6 +182,156 @@
             setCSSVariable("--placeholder-border", preview.placeholderBorderColor);
             setCSSVariable("--placeholder-text", preview.placeholderTextColor);
         }
+
+        function normalizeEditableText(text) {
+            return String(text || "").replace(/\s+/g, " ").trim();
+        }
+
+        function escapeRegExp(text) {
+            return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+
+        function clearEditableBindings() {
+            currentEditableBindings.forEach((element) => {
+                element.removeAttribute("data-edit-token-id");
+                element.classList.remove("is-editable-label");
+            });
+            currentEditableBindings = [];
+            dismissPreviewEditor();
+        }
+
+        function candidateEditableElements() {
+            return Array.from(document.querySelectorAll("#diagram svg g.node, #diagram svg g.edgeLabel"))
+                .filter((element) => normalizeEditableText(element.textContent).length > 0);
+        }
+
+        function elementMatchesIdentifier(elementID, sourceIdentifier) {
+            if (!elementID || !sourceIdentifier) {
+                return false;
+            }
+
+            const pattern = new RegExp(`(^|[^A-Za-z0-9_])${escapeRegExp(sourceIdentifier)}([^A-Za-z0-9_]|$)`);
+            return pattern.test(elementID);
+        }
+
+        function bindEditableLabels(tokens) {
+            clearEditableBindings();
+
+            if (!Array.isArray(tokens) || tokens.length === 0) {
+                return;
+            }
+
+            const candidates = candidateEditableElements();
+            const remainingTokens = [...tokens];
+
+            candidates.forEach((element) => {
+                const elementID = element.id || "";
+                const labelText = normalizeEditableText(element.textContent);
+                if (!labelText) {
+                    return;
+                }
+
+                let tokenIndex = remainingTokens.findIndex((token) =>
+                    token.sourceIdentifier &&
+                    token.kind === "nodeLabel" &&
+                    token.normalizedText === labelText &&
+                    elementMatchesIdentifier(elementID, token.sourceIdentifier)
+                );
+
+                if (tokenIndex === -1) {
+                    tokenIndex = remainingTokens.findIndex((token) => token.normalizedText === labelText);
+                }
+
+                if (tokenIndex === -1) {
+                    return;
+                }
+
+                const [token] = remainingTokens.splice(tokenIndex, 1);
+                element.dataset.editTokenId = token.id;
+                element.classList.add("is-editable-label");
+                currentEditableBindings.push(element);
+            });
+        }
+
+        function dismissPreviewEditor() {
+            if (previewEditPopover) {
+                previewEditPopover.remove();
+            }
+            previewEditPopover = null;
+            previewEditInput = null;
+        }
+
+        function beginPreviewEdit(target) {
+            const tokenID = target.dataset.editTokenId;
+            if (!tokenID) {
+                return;
+            }
+
+            dismissPreviewEditor();
+
+            const bounds = target.getBoundingClientRect();
+            const currentText = normalizeEditableText(target.textContent);
+            const popover = document.createElement("div");
+            popover.className = "preview-edit-popover";
+
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = currentText;
+            input.setAttribute("aria-label", "Edit diagram label");
+
+            const hint = document.createElement("div");
+            hint.className = "preview-edit-hint";
+            hint.textContent = "Press Return to apply, Escape to cancel.";
+
+            popover.style.left = `${Math.max(16, bounds.left)}px`;
+            popover.style.top = `${Math.max(16, bounds.top - 54)}px`;
+            popover.style.width = `${Math.max(180, Math.min(420, bounds.width + 80))}px`;
+
+            popover.appendChild(input);
+            popover.appendChild(hint);
+            document.body.appendChild(popover);
+
+            previewEditPopover = popover;
+            previewEditInput = input;
+
+            const commit = () => {
+                const nextValue = normalizeEditableText(input.value);
+                dismissPreviewEditor();
+
+                if (!nextValue || nextValue === currentText) {
+                    return;
+                }
+
+                postPreviewEdit(tokenID, nextValue);
+            };
+
+            input.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    commit();
+                } else if (event.key === "Escape") {
+                    event.preventDefault();
+                    dismissPreviewEditor();
+                }
+            });
+
+            input.addEventListener("blur", commit, { once: true });
+
+            requestAnimationFrame(() => {
+                input.focus();
+                input.select();
+            });
+        }
+
+        document.getElementById("diagram").addEventListener("dblclick", (event) => {
+            const target = event.target.closest("[data-edit-token-id]");
+            if (!target) {
+                return;
+            }
+
+            event.preventDefault();
+            beginPreviewEdit(target);
+        });
 
         function buildMermaidConfiguration(theme) {
             return {
@@ -349,6 +553,7 @@
             const errorBox = document.getElementById("error");
 
             applyPreviewPalette(payload.theme);
+            dismissPreviewEditor();
 
             errorBox.hidden = true;
             errorBox.textContent = "";
@@ -366,10 +571,14 @@
                     result.bindFunctions(diagram);
                 }
 
-                postStatus(`Diagram rendered successfully with the ${payload.theme.name} theme.`, false);
+                bindEditableLabels(payload.editableTokens || []);
+
+                const editingHint = (payload.editableTokens || []).length > 0 ? " Double-click a label to edit it." : "";
+                postStatus(`Diagram rendered successfully with the ${payload.theme.name} theme.${editingHint}`, false);
                 return true;
             } catch (error) {
                 const message = error && error.message ? error.message : String(error);
+                clearEditableBindings();
                 diagram.innerHTML = "";
                 errorBox.textContent = message;
                 errorBox.hidden = false;

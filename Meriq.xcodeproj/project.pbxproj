@@ -7,125 +7,128 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1F89C32046CD8B333AE3BC40 /* MeriqApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C7C02697B32D0451700BBC /* MeriqApp.swift */; };
-		20EF4D0316E1127381657E6A /* MermaidRenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06CBA012EDBE0718F9B8086 /* MermaidRenderEngine.swift */; };
-		299499E7D7C21821A48A0DFC /* StudioRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9D9144970D4CFE831C4213 /* StudioRepositories.swift */; };
-		3BE29BF29B61CB2CC03E867B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9996A04B27CBD71963EBF03 /* Cocoa.framework */; };
-		42E80F3C7D659E7A84F1A5ED /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = FEF1BEF54B443F0F61FB10C8 /* index.html */; };
-		70DFE09E6996FD59AABE7E68 /* mermaid.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 2AA3ABE9EEEA9CAF7533093F /* mermaid.min.js */; };
-		9CD9EF82A077FE808A3B5155 /* StudioPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4A0FA4B3F7BBCECBBA38F5C /* StudioPersistence.swift */; };
-		9F2632A93E0AA23E3667ED42 /* StudioViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D194AC4D0DAF273878AE11 /* StudioViews.swift */; };
-		BF9B197927E9BE664FC8657B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4B208FE03F673E42481B0C /* ContentView.swift */; };
-		CF0206F4DACF737B62299EC2 /* MermaidConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9EC13F07C8526667CC0B060 /* MermaidConfiguration.swift */; };
-		D565B389563616DAFC281C62 /* StudioModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1399791490621C63C717DD /* StudioModels.swift */; };
-		E33B08875C9FD62968A5BCE4 /* StudioStores.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE7A8BDC5855E4493B5C104 /* StudioStores.swift */; };
-		FAB16A05B594DE14DA807501 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 31BF42A90D79A9B05F290783 /* Assets.xcassets */; };
-		FB77FCB72301AFCB299EFAA7 /* MermaidRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5662E976CDC299FF7FA635F5 /* MermaidRenderer.swift */; };
+		0A2C0F46E506E6E0D79ED490 /* MermaidConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E5CD0A225AAEF73C2D03E7 /* MermaidConfiguration.swift */; };
+		296C8B3AC26F33014B5C9CB4 /* StudioStores.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB197AE97E0D383BC24B96C6 /* StudioStores.swift */; };
+		2F6BEC43251C7E754F0A48EA /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = BA9B197859417D13CB50F894 /* index.html */; };
+		2FFCFBFC3D55F78AAEAEE21B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A60C36157EEE6C8A0E13A4 /* ContentView.swift */; };
+		3928900793D04E39C073A546 /* StudioModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DAA583FE55FB9A578F6B766 /* StudioModels.swift */; };
+		49A4E2C8EA46CFAD1C42371C /* MermaidRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B370830A6CD31D605AD4147 /* MermaidRenderer.swift */; };
+		648DC2B14241A2DD0447186F /* StudioViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE7B8E329E092AE74470BB57 /* StudioViews.swift */; };
+		8F018D961FB1CD7F3A6B616B /* MeriqApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C771A114AA629E0008B1FA /* MeriqApp.swift */; };
+		B5B8C096BE534E13D5411359 /* StudioRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEA54B1AA557FAC2EA94CA9 /* StudioRepositories.swift */; };
+		B6A17F66FDBB4B9D8B181D25 /* MermaidSourceEditing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C6E3654A21641A929ECA65 /* MermaidSourceEditing.swift */; };
+		CC2AF2161680D1378D874043 /* mermaid.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 04CFF2D6D2EC9249EF0FD9DF /* mermaid.min.js */; };
+		D48EE586B877E913D16BA55B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67023FC902EB5FF08AA0A4EF /* Cocoa.framework */; };
+		F22F00A7B4606055BF0FA169 /* MermaidRenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12DB573CC438E91AED971FE0 /* MermaidRenderEngine.swift */; };
+		F68B33AD63A04AECFB67463E /* StudioPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374F96CA25AB467711B078F3 /* StudioPersistence.swift */; };
+		FDA296B86B830E10612FDBD5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 233AE4C7BA9591690489D0E2 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2AA3ABE9EEEA9CAF7533093F /* mermaid.min.js */ = {isa = PBXFileReference; includeInIndex = 1; path = mermaid.min.js; sourceTree = "<group>"; };
-		31BF42A90D79A9B05F290783 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4E4B208FE03F673E42481B0C /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		5662E976CDC299FF7FA635F5 /* MermaidRenderer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidRenderer.swift; sourceTree = "<group>"; };
-		6A1399791490621C63C717DD /* StudioModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioModels.swift; sourceTree = "<group>"; };
-		94C7C02697B32D0451700BBC /* MeriqApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeriqApp.swift; sourceTree = "<group>"; };
-		B06CBA012EDBE0718F9B8086 /* MermaidRenderEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidRenderEngine.swift; sourceTree = "<group>"; };
-		B9D194AC4D0DAF273878AE11 /* StudioViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioViews.swift; sourceTree = "<group>"; };
-		BB9D9144970D4CFE831C4213 /* StudioRepositories.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioRepositories.swift; sourceTree = "<group>"; };
-		C4A0FA4B3F7BBCECBBA38F5C /* StudioPersistence.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioPersistence.swift; sourceTree = "<group>"; };
-		EE451D65E79BEC6193C3304F /* Meriq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Meriq.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F9996A04B27CBD71963EBF03 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
-		F9EC13F07C8526667CC0B060 /* MermaidConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidConfiguration.swift; sourceTree = "<group>"; };
-		FDE7A8BDC5855E4493B5C104 /* StudioStores.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioStores.swift; sourceTree = "<group>"; };
-		FEF1BEF54B443F0F61FB10C8 /* index.html */ = {isa = PBXFileReference; includeInIndex = 1; path = index.html; sourceTree = "<group>"; };
+		0099970D2DB02AD283556E9E /* Meriq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Meriq.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		04CFF2D6D2EC9249EF0FD9DF /* mermaid.min.js */ = {isa = PBXFileReference; includeInIndex = 1; path = mermaid.min.js; sourceTree = "<group>"; };
+		12DB573CC438E91AED971FE0 /* MermaidRenderEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidRenderEngine.swift; sourceTree = "<group>"; };
+		16E5CD0A225AAEF73C2D03E7 /* MermaidConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidConfiguration.swift; sourceTree = "<group>"; };
+		233AE4C7BA9591690489D0E2 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		28A60C36157EEE6C8A0E13A4 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		374F96CA25AB467711B078F3 /* StudioPersistence.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioPersistence.swift; sourceTree = "<group>"; };
+		3DAA583FE55FB9A578F6B766 /* StudioModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioModels.swift; sourceTree = "<group>"; };
+		46C771A114AA629E0008B1FA /* MeriqApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeriqApp.swift; sourceTree = "<group>"; };
+		67023FC902EB5FF08AA0A4EF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		7B370830A6CD31D605AD4147 /* MermaidRenderer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidRenderer.swift; sourceTree = "<group>"; };
+		AE7B8E329E092AE74470BB57 /* StudioViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioViews.swift; sourceTree = "<group>"; };
+		BA9B197859417D13CB50F894 /* index.html */ = {isa = PBXFileReference; includeInIndex = 1; path = index.html; sourceTree = "<group>"; };
+		BB197AE97E0D383BC24B96C6 /* StudioStores.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioStores.swift; sourceTree = "<group>"; };
+		D3C6E3654A21641A929ECA65 /* MermaidSourceEditing.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidSourceEditing.swift; sourceTree = "<group>"; };
+		FFEA54B1AA557FAC2EA94CA9 /* StudioRepositories.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioRepositories.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CEB69F31A895809EE6FF9E8B /* Frameworks */ = {
+		E738E269D43D940130CDDF33 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3BE29BF29B61CB2CC03E867B /* Cocoa.framework in Frameworks */,
+				D48EE586B877E913D16BA55B /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00C89907E00C14D824D76ED8 /* OS X */ = {
+		23BAA9940D05D7CBD79FA5B9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F9996A04B27CBD71963EBF03 /* Cocoa.framework */,
-			);
-			name = "OS X";
-			sourceTree = "<group>";
-		};
-		0178DBA138121227163B8381 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				31BF42A90D79A9B05F290783 /* Assets.xcassets */,
-				FEF1BEF54B443F0F61FB10C8 /* index.html */,
-				2AA3ABE9EEEA9CAF7533093F /* mermaid.min.js */,
+				233AE4C7BA9591690489D0E2 /* Assets.xcassets */,
+				BA9B197859417D13CB50F894 /* index.html */,
+				04CFF2D6D2EC9249EF0FD9DF /* mermaid.min.js */,
 			);
 			name = Resources;
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		1B41FBA546E92639B06E475B /* Meriq */ = {
+		4C5C27FF56F3853C22D7A300 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0178DBA138121227163B8381 /* Resources */,
-				4E4B208FE03F673E42481B0C /* ContentView.swift */,
-				94C7C02697B32D0451700BBC /* MeriqApp.swift */,
-				F9EC13F07C8526667CC0B060 /* MermaidConfiguration.swift */,
-				B06CBA012EDBE0718F9B8086 /* MermaidRenderEngine.swift */,
-				5662E976CDC299FF7FA635F5 /* MermaidRenderer.swift */,
-				6A1399791490621C63C717DD /* StudioModels.swift */,
-				C4A0FA4B3F7BBCECBBA38F5C /* StudioPersistence.swift */,
-				BB9D9144970D4CFE831C4213 /* StudioRepositories.swift */,
-				FDE7A8BDC5855E4493B5C104 /* StudioStores.swift */,
-				B9D194AC4D0DAF273878AE11 /* StudioViews.swift */,
+				0099970D2DB02AD283556E9E /* Meriq.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6461F2F70F6151C092F143B9 /* Meriq */ = {
+			isa = PBXGroup;
+			children = (
+				23BAA9940D05D7CBD79FA5B9 /* Resources */,
+				28A60C36157EEE6C8A0E13A4 /* ContentView.swift */,
+				46C771A114AA629E0008B1FA /* MeriqApp.swift */,
+				16E5CD0A225AAEF73C2D03E7 /* MermaidConfiguration.swift */,
+				12DB573CC438E91AED971FE0 /* MermaidRenderEngine.swift */,
+				7B370830A6CD31D605AD4147 /* MermaidRenderer.swift */,
+				D3C6E3654A21641A929ECA65 /* MermaidSourceEditing.swift */,
+				3DAA583FE55FB9A578F6B766 /* StudioModels.swift */,
+				374F96CA25AB467711B078F3 /* StudioPersistence.swift */,
+				FFEA54B1AA557FAC2EA94CA9 /* StudioRepositories.swift */,
+				BB197AE97E0D383BC24B96C6 /* StudioStores.swift */,
+				AE7B8E329E092AE74470BB57 /* StudioViews.swift */,
 			);
 			name = Meriq;
 			path = Sources/Meriq;
 			sourceTree = "<group>";
 		};
-		507343C3013F96AF6EBE537B /* Frameworks */ = {
+		89EB710A9A04B99D7D305B9E = {
 			isa = PBXGroup;
 			children = (
-				00C89907E00C14D824D76ED8 /* OS X */,
+				4C5C27FF56F3853C22D7A300 /* Products */,
+				A92E1F0167981C21F5B545E3 /* Frameworks */,
+				6461F2F70F6151C092F143B9 /* Meriq */,
+			);
+			sourceTree = "<group>";
+		};
+		A92E1F0167981C21F5B545E3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E4AFEBE1CF7CB5A07952B9B3 /* OS X */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		6E1AB2560168CD7FFEA8C2C4 /* Products */ = {
+		E4AFEBE1CF7CB5A07952B9B3 /* OS X */ = {
 			isa = PBXGroup;
 			children = (
-				EE451D65E79BEC6193C3304F /* Meriq.app */,
+				67023FC902EB5FF08AA0A4EF /* Cocoa.framework */,
 			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		C5F64FCCA4D3C5509765DFFF = {
-			isa = PBXGroup;
-			children = (
-				6E1AB2560168CD7FFEA8C2C4 /* Products */,
-				507343C3013F96AF6EBE537B /* Frameworks */,
-				1B41FBA546E92639B06E475B /* Meriq */,
-			);
+			name = "OS X";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0E9C150D6B79C5C2ADB57C0F /* Meriq */ = {
+		4F521F91F41F1F6C6B4516BA /* Meriq */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 833636A2097787A447D27B03 /* Build configuration list for PBXNativeTarget "Meriq" */;
+			buildConfigurationList = 2CFB22E13CD0A45786F216B9 /* Build configuration list for PBXNativeTarget "Meriq" */;
 			buildPhases = (
-				3DFB5019F848697D444A0AE3 /* Sources */,
-				CEB69F31A895809EE6FF9E8B /* Frameworks */,
-				3742FE679932B3DFF9A8E2FA /* Resources */,
+				F39DD9E7FE94DB7E60C0562C /* Sources */,
+				E738E269D43D940130CDDF33 /* Frameworks */,
+				11B1454F8642F0CC3DB296D1 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -133,24 +136,24 @@
 			);
 			name = Meriq;
 			productName = Meriq;
-			productReference = EE451D65E79BEC6193C3304F /* Meriq.app */;
+			productReference = 0099970D2DB02AD283556E9E /* Meriq.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		C7DF8EE36747E9AC307B88B9 /* Project object */ = {
+		6FEFCE67895BCB8EB0C1479B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
-					0E9C150D6B79C5C2ADB57C0F = {
+					4F521F91F41F1F6C6B4516BA = {
 						CreatedOnToolsVersion = 26.4;
 					};
 				};
 			};
-			buildConfigurationList = F31A98B17ED27248EA5A7153 /* Build configuration list for PBXProject "Meriq" */;
+			buildConfigurationList = C01FA5F572B8DE6FB4EE7CAD /* Build configuration list for PBXProject "Meriq" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -158,53 +161,101 @@
 				en,
 				Base,
 			);
-			mainGroup = C5F64FCCA4D3C5509765DFFF;
+			mainGroup = 89EB710A9A04B99D7D305B9E;
 			minimizedProjectReferenceProxies = 0;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 6E1AB2560168CD7FFEA8C2C4 /* Products */;
+			productRefGroup = 4C5C27FF56F3853C22D7A300 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0E9C150D6B79C5C2ADB57C0F /* Meriq */,
+				4F521F91F41F1F6C6B4516BA /* Meriq */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		3742FE679932B3DFF9A8E2FA /* Resources */ = {
+		11B1454F8642F0CC3DB296D1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FAB16A05B594DE14DA807501 /* Assets.xcassets in Resources */,
-				42E80F3C7D659E7A84F1A5ED /* index.html in Resources */,
-				70DFE09E6996FD59AABE7E68 /* mermaid.min.js in Resources */,
+				FDA296B86B830E10612FDBD5 /* Assets.xcassets in Resources */,
+				2F6BEC43251C7E754F0A48EA /* index.html in Resources */,
+				CC2AF2161680D1378D874043 /* mermaid.min.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3DFB5019F848697D444A0AE3 /* Sources */ = {
+		F39DD9E7FE94DB7E60C0562C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF9B197927E9BE664FC8657B /* ContentView.swift in Sources */,
-				1F89C32046CD8B333AE3BC40 /* MeriqApp.swift in Sources */,
-				CF0206F4DACF737B62299EC2 /* MermaidConfiguration.swift in Sources */,
-				20EF4D0316E1127381657E6A /* MermaidRenderEngine.swift in Sources */,
-				FB77FCB72301AFCB299EFAA7 /* MermaidRenderer.swift in Sources */,
-				D565B389563616DAFC281C62 /* StudioModels.swift in Sources */,
-				9CD9EF82A077FE808A3B5155 /* StudioPersistence.swift in Sources */,
-				299499E7D7C21821A48A0DFC /* StudioRepositories.swift in Sources */,
-				E33B08875C9FD62968A5BCE4 /* StudioStores.swift in Sources */,
-				9F2632A93E0AA23E3667ED42 /* StudioViews.swift in Sources */,
+				2FFCFBFC3D55F78AAEAEE21B /* ContentView.swift in Sources */,
+				8F018D961FB1CD7F3A6B616B /* MeriqApp.swift in Sources */,
+				0A2C0F46E506E6E0D79ED490 /* MermaidConfiguration.swift in Sources */,
+				F22F00A7B4606055BF0FA169 /* MermaidRenderEngine.swift in Sources */,
+				49A4E2C8EA46CFAD1C42371C /* MermaidRenderer.swift in Sources */,
+				B6A17F66FDBB4B9D8B181D25 /* MermaidSourceEditing.swift in Sources */,
+				3928900793D04E39C073A546 /* StudioModels.swift in Sources */,
+				F68B33AD63A04AECFB67463E /* StudioPersistence.swift in Sources */,
+				B5B8C096BE534E13D5411359 /* StudioRepositories.swift in Sources */,
+				296C8B3AC26F33014B5C9CB4 /* StudioStores.swift in Sources */,
+				648DC2B14241A2DD0447186F /* StudioViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		4286BC3C6996DDD8E92A19EA /* Release */ = {
+		94354EF270BA2F1A658447BA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Meriq;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHighResolutionCapable = YES;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.Meriq;
+				PRODUCT_NAME = Meriq;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		D10C9F6AD8C6F032F52481A2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Meriq;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHighResolutionCapable = YES;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.Meriq;
+				PRODUCT_NAME = Meriq;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		F52EBC31FF9712A075BBCDC5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -259,54 +310,7 @@
 			};
 			name = Release;
 		};
-		98AC39F30118650C482230A2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_HARDENED_RUNTIME = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Meriq;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				INFOPLIST_KEY_NSHighResolutionCapable = YES;
-				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.Meriq;
-				PRODUCT_NAME = Meriq;
-				SDKROOT = macosx;
-				SWIFT_VERSION = 6.0;
-			};
-			name = Release;
-		};
-		99E4DF76BB41E6289CB1FC5A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Meriq;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				INFOPLIST_KEY_NSHighResolutionCapable = YES;
-				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.Meriq;
-				PRODUCT_NAME = Meriq;
-				SDKROOT = macosx;
-				SWIFT_VERSION = 6.0;
-			};
-			name = Debug;
-		};
-		E0751D7A7708DE18AD9D1C46 /* Debug */ = {
+		FC412CAC09826E6720A85C11 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -371,25 +375,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		833636A2097787A447D27B03 /* Build configuration list for PBXNativeTarget "Meriq" */ = {
+		2CFB22E13CD0A45786F216B9 /* Build configuration list for PBXNativeTarget "Meriq" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				98AC39F30118650C482230A2 /* Release */,
-				99E4DF76BB41E6289CB1FC5A /* Debug */,
+				94354EF270BA2F1A658447BA /* Release */,
+				D10C9F6AD8C6F032F52481A2 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F31A98B17ED27248EA5A7153 /* Build configuration list for PBXProject "Meriq" */ = {
+		C01FA5F572B8DE6FB4EE7CAD /* Build configuration list for PBXProject "Meriq" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E0751D7A7708DE18AD9D1C46 /* Debug */,
-				4286BC3C6996DDD8E92A19EA /* Release */,
+				FC412CAC09826E6720A85C11 /* Debug */,
+				F52EBC31FF9712A075BBCDC5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = C7DF8EE36747E9AC307B88B9 /* Project object */;
+	rootObject = 6FEFCE67895BCB8EB0C1479B /* Project object */;
 }

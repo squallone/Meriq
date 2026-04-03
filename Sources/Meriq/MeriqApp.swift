@@ -43,6 +43,39 @@ struct MeriqApp: App {
                 .modelContainer(container)
                 .preferredColorScheme(.dark)
         }
+        .commands {
+            PreviewZoomCommands(editorStore: editorStore)
+        }
         .defaultSize(width: 1460, height: 900)
+    }
+}
+
+struct PreviewZoomCommands: Commands {
+    @ObservedObject var editorStore: EditorStore
+
+    var body: some Commands {
+        CommandMenu("Preview") {
+            Button("Activate Zoom In Tool") {
+                editorStore.activatePreviewTool(.zoomIn)
+            }
+            .disabled(!editorStore.previewZoomState.canZoomIn)
+
+            Button("Activate Zoom Out Tool") {
+                editorStore.activatePreviewTool(.zoomOut)
+            }
+            .disabled(!editorStore.previewZoomState.canZoomOut)
+
+            Button("Cancel Preview Tool") {
+                editorStore.cancelPreviewTool()
+            }
+            .disabled(!editorStore.previewToolMode.isActive)
+
+            Divider()
+
+            Button("Reset Zoom") {
+                editorStore.resetPreviewZoom()
+            }
+            .disabled(editorStore.previewZoomState.scale == DiagramPreviewZoomState.defaultScale)
+        }
     }
 }

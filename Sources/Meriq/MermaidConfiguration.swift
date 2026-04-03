@@ -236,6 +236,7 @@ struct MermaidPreviewRequest: Codable, Equatable {
     let source: String
     let theme: MermaidThemePreset
     let padding: Double
+    let editableTokens: [MermaidEditableToken]
 }
 
 struct MermaidExportRequest: Codable, Equatable {

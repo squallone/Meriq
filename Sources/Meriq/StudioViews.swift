@@ -38,8 +38,57 @@ private enum StudioChrome {
     static let accentBlue = Color(red: 0.38, green: 0.56, blue: 0.97)
 }
 
+private enum PreviewToolCursor {
+    static func set(mode: PreviewToolMode, active: Bool) {
+        guard active else {
+            reset()
+            return
+        }
+
+        cursor(for: mode).set()
+    }
+
+    static func reset() {
+        NSCursor.arrow.set()
+    }
+
+    private static func cursor(for mode: PreviewToolMode) -> NSCursor {
+        switch mode {
+        case .none:
+            return .arrow
+        case .zoomIn:
+            return makeCursor(systemSymbolName: "plus.magnifyingglass")
+        case .zoomOut:
+            return makeCursor(systemSymbolName: "minus.magnifyingglass")
+        }
+    }
+
+    private static func makeCursor(systemSymbolName: String) -> NSCursor {
+        let size = NSSize(width: 28, height: 28)
+        let image = NSImage(size: size, flipped: false) { rect in
+            let backgroundPath = NSBezierPath(ovalIn: rect.insetBy(dx: 1, dy: 1))
+            NSColor(calibratedWhite: 0.08, alpha: 0.94).setFill()
+            backgroundPath.fill()
+
+            NSColor.white.withAlphaComponent(0.12).setStroke()
+            backgroundPath.lineWidth = 1
+            backgroundPath.stroke()
+
+            let configuration = NSImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
+            let symbol = NSImage(systemSymbolName: systemSymbolName, accessibilityDescription: nil)?
+                .withSymbolConfiguration(configuration)
+            let symbolRect = NSRect(x: 6, y: 6, width: 16, height: 16)
+            symbol?.draw(in: symbolRect)
+            return true
+        }
+
+        return NSCursor(image: image, hotSpot: NSPoint(x: 14, y: 14))
+    }
+}
+
 struct RootStudioView: View {
     @EnvironmentObject private var libraryStore: LibraryStore
+    @EnvironmentObject private var editorStore: EditorStore
 
     var body: some View {
         NavigationSplitView {
@@ -59,6 +108,10 @@ struct RootStudioView: View {
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
+        )
+        .background(
+            PreviewShortcutMonitor()
+                .frame(width: 0, height: 0)
         )
         .sheet(isPresented: $libraryStore.isPresentingCategoryEditor) {
             CategoryEditorSheet()
@@ -819,13 +872,21 @@ struct MermaidEditorView: View {
 }
 
 struct PreviewDetailColumn: View {
+    @EnvironmentObject private var editorStore: EditorStore
+
     var body: some View {
-        VStack(spacing: 18) {
-            MermaidPreviewPane()
-            DocumentInspectorView()
-                .frame(minHeight: 320, idealHeight: 360, maxHeight: 420)
+        GeometryReader { proxy in
+            let maxPanelHeight = min(420.0, max(220.0, proxy.size.height * 0.48))
+
+            VStack(spacing: 12) {
+                MermaidPreviewPane()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                DocumentBottomPanel(maxPanelHeight: maxPanelHeight)
+            }
+            .padding(18)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(18)
     }
 }
 
@@ -838,22 +899,522 @@ struct MermaidPreviewPane: View {
                 Text("Preview")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(StudioChrome.textPrimary)
-                Spacer()
-            }
 
-            MermaidWebView(webView: editorStore.renderer.webView)
-                .frame(maxWidth: .infinity, minHeight: 420, maxHeight: .infinity)
+                Spacer()
+
+                HStack(spacing: 8) {
+                    Button {
+                        editorStore.zoomOutPreviewImmediately()
+                    } label: {
+                        Image(systemName: "minus.magnifyingglass")
+                    }
+                    .buttonStyle(.borderless)
+                    .disabled(!editorStore.previewZoomState.canZoomOut)
+                    .foregroundStyle(StudioChrome.textSecondary)
+                    .help("Zoom Out")
+
+                    Text(editorStore.previewZoomState.percentageLabel)
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(StudioChrome.textSecondary)
+                        .frame(minWidth: 44)
+
+                    Button {
+                        editorStore.zoomInPreviewImmediately()
+                    } label: {
+                        Image(systemName: "plus.magnifyingglass")
+                    }
+                    .buttonStyle(.borderless)
+                    .disabled(!editorStore.previewZoomState.canZoomIn)
+                    .foregroundStyle(StudioChrome.textSecondary)
+                    .help("Zoom In")
+                }
+                .font(.system(size: 13, weight: .semibold))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 7)
                 .background(
-                    PreviewGridBackground()
-                        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                    Capsule(style: .continuous)
+                        .fill(StudioChrome.surfaceSecondary.opacity(0.92))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    Capsule(style: .continuous)
                         .stroke(StudioChrome.borderSoft, lineWidth: 1)
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            }
+
+            ZStack {
+                MermaidWebView(webView: editorStore.renderer.webView)
+                    .frame(maxWidth: .infinity, minHeight: 420, maxHeight: .infinity)
+                    .background(
+                        PreviewGridBackground()
+                            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                    )
+
+                if editorStore.previewToolMode.isActive {
+                    PreviewToolOverlay(mode: editorStore.previewToolMode)
+                }
+
+                PreviewClickCaptureView(
+                    mode: editorStore.previewToolMode,
+                    onPreviewClick: { editorStore.performPreviewToolClick() }
+                )
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .stroke(
+                        editorStore.previewToolMode.isActive ? StudioChrome.accentMint.opacity(0.4) : StudioChrome.borderSoft,
+                        lineWidth: 1
+                    )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+private struct PreviewToolOverlay: View {
+    let mode: PreviewToolMode
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            Rectangle()
+                .fill(StudioChrome.surfacePrimary.opacity(0.10))
+
+            VStack(alignment: .leading, spacing: 8) {
+                Label(mode.title, systemImage: mode.symbolName)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(StudioChrome.textPrimary)
+
+                Text(mode.instruction)
+                    .font(.system(size: 11))
+                    .foregroundStyle(StudioChrome.textSecondary)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(StudioChrome.panelFill.opacity(0.96))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(StudioChrome.borderStrong, lineWidth: 1)
+            )
+            .padding(16)
+        }
+        .allowsHitTesting(false)
+        .overlay(alignment: .bottomTrailing) {
+            Text("Esc to cancel")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(StudioChrome.textTertiary)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+        }
+    }
+}
+
+private struct PreviewClickCaptureView: NSViewRepresentable {
+    let mode: PreviewToolMode
+    let onPreviewClick: () -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(onPreviewClick: onPreviewClick)
+    }
+
+    func makeNSView(context: Context) -> PreviewCaptureNSView {
+        let view = PreviewCaptureNSView()
+        view.coordinator = context.coordinator
+        return view
+    }
+
+    static func dismantleNSView(_ nsView: PreviewCaptureNSView, coordinator: Coordinator) {
+        nsView.teardown()
+    }
+
+    func updateNSView(_ nsView: PreviewCaptureNSView, context: Context) {
+        context.coordinator.onPreviewClick = onPreviewClick
+        nsView.currentMode = mode
+        nsView.needsLayout = true
+    }
+
+    final class Coordinator {
+        var onPreviewClick: () -> Void
+
+        init(onPreviewClick: @escaping () -> Void) {
+            self.onPreviewClick = onPreviewClick
+        }
+    }
+}
+
+@MainActor
+private final class PreviewCaptureNSView: NSView {
+    weak var coordinator: PreviewClickCaptureView.Coordinator?
+    var currentMode: PreviewToolMode = .none {
+        didSet {
+            if oldValue != currentMode {
+                if currentMode == .none {
+                    PreviewToolCursor.reset()
+                }
+                needsDisplay = true
+            }
+        }
+    }
+
+    private var clickMonitor: Any?
+    private var trackingAreaReference: NSTrackingArea?
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        wantsLayer = true
+        layer?.backgroundColor = NSColor.clear.cgColor
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        installClickMonitorIfNeeded()
+    }
+
+    override func viewWillMove(toWindow newWindow: NSWindow?) {
+        if newWindow == nil {
+            teardown()
+        }
+        super.viewWillMove(toWindow: newWindow)
+    }
+
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        nil
+    }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+
+        if let trackingAreaReference {
+            removeTrackingArea(trackingAreaReference)
+        }
+
+        let trackingArea = NSTrackingArea(
+            rect: bounds,
+            options: [.activeInKeyWindow, .inVisibleRect, .mouseEnteredAndExited, .cursorUpdate],
+            owner: self,
+            userInfo: nil
+        )
+        addTrackingArea(trackingArea)
+        trackingAreaReference = trackingArea
+    }
+
+    override func mouseEntered(with event: NSEvent) {
+        updateCursor()
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        PreviewToolCursor.reset()
+    }
+
+    override func cursorUpdate(with event: NSEvent) {
+        updateCursor()
+    }
+
+    private func installClickMonitorIfNeeded() {
+        guard clickMonitor == nil else { return }
+
+        clickMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown]) { [weak self] event in
+            guard let self else { return event }
+            guard currentMode.isActive else { return event }
+
+            let boundsInWindow = convert(bounds, to: nil)
+            guard boundsInWindow.contains(event.locationInWindow) else { return event }
+
+            coordinator?.onPreviewClick()
+            return event
+        }
+    }
+
+    func teardown() {
+        if let clickMonitor {
+            NSEvent.removeMonitor(clickMonitor)
+            self.clickMonitor = nil
+        }
+        PreviewToolCursor.reset()
+    }
+
+    private func updateCursor() {
+        PreviewToolCursor.set(mode: currentMode, active: currentMode.isActive)
+    }
+}
+
+private struct PreviewShortcutMonitor: NSViewRepresentable {
+    @EnvironmentObject private var editorStore: EditorStore
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(editorStore: editorStore)
+    }
+
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView(frame: .zero)
+        context.coordinator.installIfNeeded()
+        return view
+    }
+
+    static func dismantleNSView(_ nsView: NSView, coordinator: Coordinator) {
+        coordinator.teardown()
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        context.coordinator.editorStore = editorStore
+        context.coordinator.installIfNeeded()
+    }
+
+    @MainActor
+    final class Coordinator {
+        weak var editorStore: EditorStore?
+        private var keyMonitor: Any?
+        private var isZKeyDown = false
+        private var isOptionKeyDown = false
+
+        init(editorStore: EditorStore) {
+            self.editorStore = editorStore
+        }
+
+        func installIfNeeded() {
+            guard keyMonitor == nil else { return }
+
+            keyMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp, .flagsChanged]) { [weak self] event in
+                guard let self else { return event }
+                guard self.shouldHandle(event: event) else { return event }
+                return self.handle(event: event)
+            }
+        }
+
+        func teardown() {
+            if let keyMonitor {
+                NSEvent.removeMonitor(keyMonitor)
+                self.keyMonitor = nil
+            }
+            isZKeyDown = false
+            isOptionKeyDown = false
+        }
+
+        private func shouldHandle(event: NSEvent) -> Bool {
+            guard event.type == .keyDown || event.type == .keyUp || event.type == .flagsChanged else { return false }
+
+            let isTextInputActive = MainActor.assumeIsolated {
+                if let firstResponder = NSApp.keyWindow?.firstResponder, firstResponder is NSTextView {
+                    return true
+                }
+                return false
+            }
+
+            if isTextInputActive {
+                return false
+            }
+
+            return true
+        }
+
+        private func handle(event: NSEvent) -> NSEvent? {
+            switch event.type {
+            case .flagsChanged:
+                let wasOptionDown = isOptionKeyDown
+                isOptionKeyDown = event.modifierFlags.contains(.option)
+
+                guard wasOptionDown != isOptionKeyDown, isZKeyDown else {
+                    return event
+                }
+
+                Task { @MainActor [weak self] in
+                    self?.editorStore?.updateKeyboardZoomSession(optionPressed: self?.isOptionKeyDown == true)
+                }
+                return nil
+
+            case .keyDown:
+                let characters = event.charactersIgnoringModifiers?.lowercased() ?? ""
+
+                if characters == "\u{1b}" {
+                    isZKeyDown = false
+                    Task { @MainActor [weak self] in
+                        self?.editorStore?.cancelPreviewTool()
+                    }
+                    return nil
+                }
+
+                guard characters == "z" else { return event }
+                guard !event.isARepeat else { return nil }
+
+                isZKeyDown = true
+                isOptionKeyDown = event.modifierFlags.contains(.option)
+                Task { @MainActor [weak self] in
+                    self?.editorStore?.beginKeyboardZoomSession(optionPressed: self?.isOptionKeyDown == true)
+                }
+                return nil
+
+            case .keyUp:
+                let characters = event.charactersIgnoringModifiers?.lowercased() ?? ""
+                guard characters == "z" else { return event }
+
+                isZKeyDown = false
+                Task { @MainActor [weak self] in
+                    self?.editorStore?.endKeyboardZoomSession()
+                }
+                return nil
+
+            default:
+                return event
+            }
+        }
+    }
+}
+
+struct DocumentBottomPanel: View {
+    @EnvironmentObject private var editorStore: EditorStore
+    @State private var dragStartHeight: CGFloat?
+    @State private var isHoveringResizeHandle = false
+    @State private var isDraggingResizeHandle = false
+
+    let maxPanelHeight: CGFloat
+    private let handleStripHeight: CGFloat = 18
+    private let headerHeight: CGFloat = 58
+    private let dividerHeight: CGFloat = 1
+
+    var body: some View {
+        let resolvedPanelHeight = min(editorStore.documentPanelHeight, maxPanelHeight)
+        let bodyHeight = max(140, resolvedPanelHeight - handleStripHeight - headerHeight - dividerHeight)
+
+        VStack(spacing: 0) {
+            resizeHandle
+            panelHeader
+
+            if !editorStore.isDocumentPanelCollapsed {
+                DocumentInspectorView(showHeader: false)
+                    .frame(maxWidth: .infinity, minHeight: bodyHeight, idealHeight: bodyHeight, maxHeight: bodyHeight, alignment: .top)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .frame(
+            maxWidth: .infinity,
+            minHeight: editorStore.isDocumentPanelCollapsed ? handleStripHeight + headerHeight : resolvedPanelHeight,
+            idealHeight: editorStore.isDocumentPanelCollapsed ? handleStripHeight + headerHeight : resolvedPanelHeight,
+            maxHeight: editorStore.isDocumentPanelCollapsed ? handleStripHeight + headerHeight : resolvedPanelHeight,
+            alignment: .top
+        )
+        .background(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(StudioChrome.panelFill)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .stroke(StudioChrome.borderSoft, lineWidth: 1)
+        )
+        .animation(.spring(response: 0.24, dampingFraction: 0.88), value: editorStore.isDocumentPanelCollapsed)
+        .animation(.spring(response: 0.24, dampingFraction: 0.88), value: editorStore.documentPanelHeight)
+    }
+
+    private var resizeHandle: some View {
+        ZStack {
+            Rectangle()
+                .fill(isHoveringResizeHandle || isDraggingResizeHandle ? StudioChrome.surfaceElevated.opacity(0.65) : Color.clear)
+
+            Capsule(style: .continuous)
+                .fill(
+                    isDraggingResizeHandle
+                        ? StudioChrome.accentMint
+                        : (isHoveringResizeHandle ? StudioChrome.textSecondary : StudioChrome.textTertiary.opacity(0.72))
+                )
+                .frame(width: isDraggingResizeHandle ? 50 : 42, height: 5)
+                .overlay(
+                    Capsule(style: .continuous)
+                        .stroke(Color.white.opacity(isHoveringResizeHandle || isDraggingResizeHandle ? 0.12 : 0.06), lineWidth: 0.5)
+                )
+                .shadow(color: Color.black.opacity(isHoveringResizeHandle || isDraggingResizeHandle ? 0.18 : 0.08), radius: 6, y: 1)
+                .animation(.easeOut(duration: 0.16), value: isHoveringResizeHandle)
+                .animation(.easeOut(duration: 0.16), value: isDraggingResizeHandle)
+        }
+        .frame(height: handleStripHeight)
+        .contentShape(Rectangle())
+        .onHover { hovering in
+            isHoveringResizeHandle = hovering
+            if hovering {
+                NSCursor.resizeUpDown.push()
+            } else {
+                NSCursor.pop()
+            }
+        }
+        .gesture(resizeGesture)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(StudioChrome.divider.opacity(0.7))
+                .frame(height: 1)
+        }
+    }
+
+    private var panelHeader: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Document")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(StudioChrome.textPrimary)
+
+                Text(editorStore.isDocumentPanelCollapsed ? "Show document details" : "Drag to resize or collapse when you want more preview space")
+                    .font(.system(size: 11))
+                    .foregroundStyle(StudioChrome.textTertiary)
+            }
+
+            Spacer()
+
+            if let draft = editorStore.draft, !editorStore.isDocumentPanelCollapsed {
+                Text(draft.id.uuidString.prefix(8))
+                    .font(.system(size: 11, weight: .medium, design: .monospaced))
+                    .foregroundStyle(StudioChrome.textTertiary)
+            }
+
+            Button {
+                editorStore.toggleDocumentPanel()
+            } label: {
+                Image(systemName: editorStore.isDocumentPanelCollapsed ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(StudioChrome.textSecondary)
+                    .frame(width: 26, height: 26)
+                    .background(
+                        Circle()
+                            .fill(StudioChrome.surfaceElevated.opacity(0.88))
+                    )
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 12)
+        .frame(height: headerHeight)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if editorStore.isDocumentPanelCollapsed {
+                editorStore.toggleDocumentPanel()
+            }
+        }
+        .overlay(alignment: .bottom) {
+            if !editorStore.isDocumentPanelCollapsed {
+                Rectangle()
+                    .fill(StudioChrome.divider)
+                    .frame(height: dividerHeight)
+            }
+        }
+    }
+
+    private var resizeGesture: some Gesture {
+        DragGesture(minimumDistance: 3)
+            .onChanged { value in
+                isDraggingResizeHandle = true
+                if dragStartHeight == nil {
+                    dragStartHeight = editorStore.documentPanelHeight
+                }
+
+                let startHeight = dragStartHeight ?? editorStore.documentPanelHeight
+                editorStore.setDocumentPanelHeight(startHeight - value.translation.height, maxHeight: maxPanelHeight)
+            }
+            .onEnded { _ in
+                dragStartHeight = nil
+                isDraggingResizeHandle = false
+            }
     }
 }
 
@@ -892,18 +1453,22 @@ struct DocumentInspectorView: View {
     @EnvironmentObject private var libraryStore: LibraryStore
     @EnvironmentObject private var editorStore: EditorStore
 
+    var showHeader = true
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                HStack {
-                    Text("Document")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(StudioChrome.textPrimary)
-                    Spacer()
-                    if let draft = editorStore.draft {
-                        Text(draft.id.uuidString.prefix(8))
-                            .font(.system(size: 11, weight: .medium, design: .monospaced))
-                            .foregroundStyle(StudioChrome.textTertiary)
+                if showHeader {
+                    HStack {
+                        Text("Document")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(StudioChrome.textPrimary)
+                        Spacer()
+                        if let draft = editorStore.draft {
+                            Text(draft.id.uuidString.prefix(8))
+                                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                                .foregroundStyle(StudioChrome.textTertiary)
+                        }
                     }
                 }
 
@@ -1008,16 +1573,9 @@ struct DocumentInspectorView: View {
                 }
             }
             .padding(20)
+            .padding(.bottom, 18)
         }
         .scrollIndicators(.visible)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(StudioChrome.panelFill)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(StudioChrome.borderSoft, lineWidth: 1)
-        )
     }
 
     private func inspectorGroup<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {

@@ -9,10 +9,12 @@ final class MermaidRenderer: ObservableObject {
 
     let webView: WKWebView
     var statusObserver: ((String, Bool) -> Void)?
+    var previewEditHandler: ((MermaidPreviewEditRequest) -> Void)?
 
     private let previewEngine: MermaidRenderEngine
     private let exportEngine: MermaidRenderEngine
     private var currentDraft: DiagramDraft?
+    private var currentEditableTokens: [MermaidEditableToken] = []
 
     init() {
         let previewEngine = MermaidRenderEngine()
@@ -24,6 +26,9 @@ final class MermaidRenderer: ObservableObject {
         previewEngine.statusHandler = { [weak self] message, isError in
             self?.setStatus(message, isError: isError)
         }
+        previewEngine.previewEditHandler = { [weak self] request in
+            self?.previewEditHandler?(request)
+        }
     }
 
     var availableThemes: [MermaidThemePreset] {
@@ -34,7 +39,7 @@ final class MermaidRenderer: ObservableObject {
         MermaidThemePreset.preset(id: currentDraft?.previewThemeID ?? MermaidThemePreset.defaultPreset.id)
     }
 
-    func apply(draft: DiagramDraft, shouldRender: Bool = true) {
+    func apply(draft: DiagramDraft, shouldRender: Bool = true, editableTokens: [MermaidEditableToken] = []) {
         currentDraft = DiagramDraft(
             id: draft.id,
             name: draft.name,
@@ -43,6 +48,7 @@ final class MermaidRenderer: ObservableObject {
             exportBackground: draft.exportBackground,
             isFavorite: draft.isFavorite
         )
+        currentEditableTokens = editableTokens
 
         if shouldRender {
             renderPreview()
@@ -65,7 +71,8 @@ final class MermaidRenderer: ObservableObject {
         let request = MermaidPreviewRequest(
             source: draft.source,
             theme: MermaidThemePreset.preset(id: draft.previewThemeID),
-            padding: 18
+            padding: 18,
+            editableTokens: currentEditableTokens
         )
 
         previewEngine.renderPreview(request) { [weak self] result in
@@ -75,6 +82,10 @@ final class MermaidRenderer: ObservableObject {
 
             self?.setStatus("Could not render the diagram: \(error.localizedDescription)", isError: true)
         }
+    }
+
+    func setPreviewZoom(_ scale: CGFloat, animated: Bool = true) {
+        previewEngine.setPreviewZoom(scale, animated: animated)
     }
 
     func copySVGToClipboard(scale: Double = 2.0) {

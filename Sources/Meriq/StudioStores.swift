@@ -485,17 +485,26 @@ struct CategoryDraft {
 final class EditorStore: ObservableObject {
     @Published private(set) var draft: DiagramDraft?
     @Published var exportConfiguration = MermaidExportConfiguration()
+    @Published private(set) var previewZoomState = DiagramPreviewZoomState()
+    @Published private(set) var previewToolMode: PreviewToolMode = .none
     @Published var workspaceMode: WorkspaceMode = .split
+    @Published var isDocumentPanelCollapsed = false
     @Published private(set) var selectedCategoryID: UUID?
     @Published private(set) var statusMessage = "Create a diagram or choose one from the library."
     @Published private(set) var isRendererError = false
+    @Published private(set) var documentPanelHeight: CGFloat = 248
 
     let renderer = MermaidRenderer()
     var onPersist: (() -> Void)?
 
     private let diagramRepository: DiagramRepository
+    private let sourceEditingEngine = MermaidSourceEditingEngine()
     private var autosaveTask: Task<Void, Never>?
-    private var loadedDiagram: Diagram?
+    private var lastExpandedDocumentPanelHeight: CGFloat = 248
+    private var lastPreviewToolToggleAt: Date = .distantPast
+    private let previewToolToggleDebounceInterval: TimeInterval = 0.28
+    private var isKeyboardZoomSessionActive = false
+    private var previewToolModeBeforeKeyboardZoomSession: PreviewToolMode = .none
 
     init(diagramRepository: DiagramRepository) {
         self.diagramRepository = diagramRepository
@@ -505,14 +514,18 @@ final class EditorStore: ObservableObject {
             self?.statusMessage = message
             self?.isRendererError = isError
         }
+        renderer.previewEditHandler = { [weak self] request in
+            self?.applyPreviewEdit(request)
+        }
+        renderer.setPreviewZoom(previewZoomState.scale, animated: false)
     }
 
     func handleSelectionChange(_ diagramID: UUID?) {
         flushAutosaveIfNeeded()
 
         guard let diagramID else {
-            loadedDiagram = nil
             draft = nil
+            previewToolMode = .none
             renderer.clear()
             statusMessage = renderer.statusMessage
             isRendererError = renderer.isError
@@ -522,14 +535,15 @@ final class EditorStore: ObservableObject {
         do {
             guard let diagram = try diagramRepository.fetchDiagram(id: diagramID) else {
                 draft = nil
-                loadedDiagram = nil
                 return
             }
 
-            loadedDiagram = diagram
             selectedCategoryID = diagram.categoryID
             draft = DiagramDraft(diagram: diagram)
-            renderer.apply(draft: DiagramDraft(diagram: diagram))
+            renderer.apply(
+                draft: DiagramDraft(diagram: diagram),
+                editableTokens: editableTokens(for: DiagramDraft(diagram: diagram))
+            )
             try diagramRepository.markOpened(id: diagramID, at: .now)
             onPersist?()
             statusMessage = renderer.statusMessage
@@ -550,7 +564,11 @@ final class EditorStore: ObservableObject {
         guard var draft else { return }
         draft.source = source
         self.draft = draft
-        renderer.apply(draft: draft, shouldRender: false)
+        renderer.apply(
+            draft: draft,
+            shouldRender: false,
+            editableTokens: editableTokens(for: draft)
+        )
         scheduleAutosave()
     }
 
@@ -558,7 +576,7 @@ final class EditorStore: ObservableObject {
         guard var draft else { return }
         draft.previewThemeID = themeID
         self.draft = draft
-        renderer.apply(draft: draft)
+        renderer.apply(draft: draft, editableTokens: editableTokens(for: draft))
         scheduleAutosave()
     }
 
@@ -566,7 +584,11 @@ final class EditorStore: ObservableObject {
         guard var draft else { return }
         draft.exportBackground.mode = mode
         self.draft = draft
-        renderer.apply(draft: draft, shouldRender: false)
+        renderer.apply(
+            draft: draft,
+            shouldRender: false,
+            editableTokens: editableTokens(for: draft)
+        )
         scheduleAutosave()
     }
 
@@ -574,7 +596,11 @@ final class EditorStore: ObservableObject {
         guard var draft else { return }
         draft.exportBackground.customColorHex = color.hexRGBString
         self.draft = draft
-        renderer.apply(draft: draft, shouldRender: false)
+        renderer.apply(
+            draft: draft,
+            shouldRender: false,
+            editableTokens: editableTokens(for: draft)
+        )
         scheduleAutosave()
     }
 
@@ -619,6 +645,133 @@ final class EditorStore: ObservableObject {
         isRendererError = renderer.isError
     }
 
+    func activatePreviewTool(_ mode: PreviewToolMode) {
+        switch mode {
+        case .none:
+            cancelPreviewTool()
+        case .zoomIn:
+            guard previewZoomState.canZoomIn else { return }
+            setActivePreviewTool(.zoomIn)
+        case .zoomOut:
+            guard previewZoomState.canZoomOut else { return }
+            setActivePreviewTool(.zoomOut)
+        }
+    }
+
+    func zoomInPreviewImmediately() {
+        guard previewZoomState.canZoomIn else { return }
+        applyPreviewZoom(previewZoomState.zoomingIn())
+        setPreviewInteractionStatus("Zoomed to \(previewZoomState.percentageLabel).")
+    }
+
+    func zoomOutPreviewImmediately() {
+        guard previewZoomState.canZoomOut else { return }
+        applyPreviewZoom(previewZoomState.zoomingOut())
+        setPreviewInteractionStatus("Zoomed to \(previewZoomState.percentageLabel).")
+    }
+
+    func beginKeyboardZoomSession(optionPressed: Bool) {
+        let requestedMode: PreviewToolMode = optionPressed ? .zoomOut : .zoomIn
+        guard canActivatePreviewTool(requestedMode) else { return }
+
+        if !isKeyboardZoomSessionActive {
+            isKeyboardZoomSessionActive = true
+            previewToolModeBeforeKeyboardZoomSession = previewToolMode
+        }
+
+        setPreviewToolForKeyboardSession(requestedMode)
+    }
+
+    func updateKeyboardZoomSession(optionPressed: Bool) {
+        guard isKeyboardZoomSessionActive else { return }
+        let requestedMode: PreviewToolMode = optionPressed ? .zoomOut : .zoomIn
+
+        if canActivatePreviewTool(requestedMode) {
+            setPreviewToolForKeyboardSession(requestedMode)
+        } else {
+            setPreviewInteractionStatus(requestedMode == .zoomOut
+                ? "Already at minimum zoom."
+                : "Already at maximum zoom.")
+        }
+    }
+
+    func endKeyboardZoomSession() {
+        guard isKeyboardZoomSessionActive else { return }
+        isKeyboardZoomSessionActive = false
+
+        let previousMode = previewToolModeBeforeKeyboardZoomSession
+        previewToolModeBeforeKeyboardZoomSession = .none
+
+        if previousMode == .none {
+            previewToolMode = .none
+            syncStatusFromRenderer()
+        } else if canActivatePreviewTool(previousMode) {
+            previewToolMode = previousMode
+            setPreviewInteractionStatus(previousMode.instruction)
+        } else {
+            previewToolMode = .none
+            syncStatusFromRenderer()
+        }
+    }
+
+    func resetPreviewZoom() {
+        previewToolMode = .none
+        applyPreviewZoom(previewZoomState.resetting())
+    }
+
+    func cancelPreviewTool() {
+        guard previewToolMode.isActive || isKeyboardZoomSessionActive else { return }
+        isKeyboardZoomSessionActive = false
+        previewToolModeBeforeKeyboardZoomSession = .none
+        previewToolMode = .none
+        lastPreviewToolToggleAt = .now
+        syncStatusFromRenderer()
+    }
+
+    func performPreviewToolClick() {
+        switch previewToolMode {
+        case .none:
+            return
+        case .zoomIn:
+            let wasAtLimit = !previewZoomState.canZoomIn
+            let updatedState = previewZoomState.zoomingIn()
+            applyPreviewZoom(updatedState)
+            if wasAtLimit {
+                setPreviewInteractionStatus("Already at maximum zoom. Click elsewhere, or press Esc to leave the zoom tool.")
+            } else {
+                setPreviewInteractionStatus("Zoomed to \(updatedState.percentageLabel). Click again to keep zooming in, or press Esc to leave the tool.")
+            }
+        case .zoomOut:
+            let wasAtLimit = !previewZoomState.canZoomOut
+            let updatedState = previewZoomState.zoomingOut()
+            applyPreviewZoom(updatedState)
+            if wasAtLimit {
+                setPreviewInteractionStatus("Already at minimum zoom. Click elsewhere, or press Esc to leave the zoom tool.")
+            } else {
+                setPreviewInteractionStatus("Zoomed to \(updatedState.percentageLabel). Click again to keep zooming out, or press Esc to leave the tool.")
+            }
+        }
+    }
+
+    func toggleDocumentPanel() {
+        if isDocumentPanelCollapsed {
+            isDocumentPanelCollapsed = false
+            documentPanelHeight = lastExpandedDocumentPanelHeight
+        } else {
+            lastExpandedDocumentPanelHeight = documentPanelHeight
+            isDocumentPanelCollapsed = true
+        }
+    }
+
+    func setDocumentPanelHeight(_ newHeight: CGFloat, maxHeight: CGFloat) {
+        let clamped = min(max(newHeight, 160), maxHeight)
+        documentPanelHeight = clamped
+        lastExpandedDocumentPanelHeight = clamped
+        if isDocumentPanelCollapsed {
+            isDocumentPanelCollapsed = false
+        }
+    }
+
     func flushAutosaveIfNeeded() {
         autosaveTask?.cancel()
         autosaveTask = nil
@@ -633,6 +786,24 @@ final class EditorStore: ObservableObject {
         }
     }
 
+    private func applyPreviewEdit(_ request: MermaidPreviewEditRequest) {
+        guard var draft else { return }
+
+        do {
+            let result = try sourceEditingEngine.applyPreviewEdit(request, to: draft.source)
+            draft.source = result.updatedSource
+            self.draft = draft
+            renderer.apply(draft: draft, editableTokens: editableTokens(for: draft))
+            scheduleAutosave()
+            let scopeLabel = result.editedToken.kind == .nodeLabel ? "node" : "edge"
+            statusMessage = "Updated \(scopeLabel) text in the Mermaid source from the preview."
+            isRendererError = false
+        } catch {
+            statusMessage = error.localizedDescription
+            renderer.setStatus(statusMessage, isError: true)
+        }
+    }
+
     private func persistDraft() {
         guard let draft else { return }
 
@@ -643,12 +814,68 @@ final class EditorStore: ObservableObject {
             } else {
                 try diagramRepository.updateDiagramMetadata(id: draft.id, name: draft.name, categoryID: nil)
             }
-            renderer.apply(draft: draft)
+            renderer.apply(draft: draft, editableTokens: editableTokens(for: draft))
             onPersist?()
             statusMessage = renderer.statusMessage
             isRendererError = renderer.isError
         } catch {
             statusMessage = error.localizedDescription
         }
+    }
+
+    private func editableTokens(for draft: DiagramDraft) -> [MermaidEditableToken] {
+        sourceEditingEngine.editableTokens(in: draft.source)
+    }
+
+    private func applyPreviewZoom(_ state: DiagramPreviewZoomState) {
+        guard state != previewZoomState else { return }
+        previewZoomState = state
+        renderer.setPreviewZoom(state.scale)
+    }
+
+    private func canActivatePreviewTool(_ mode: PreviewToolMode) -> Bool {
+        switch mode {
+        case .none:
+            true
+        case .zoomIn:
+            previewZoomState.canZoomIn
+        case .zoomOut:
+            previewZoomState.canZoomOut
+        }
+    }
+
+    private func setPreviewToolForKeyboardSession(_ mode: PreviewToolMode) {
+        guard previewToolMode != mode else { return }
+        previewToolMode = mode
+        setPreviewInteractionStatus(mode.instruction)
+    }
+
+    private func setActivePreviewTool(_ mode: PreviewToolMode) {
+        let now = Date()
+
+        if previewToolMode == mode {
+            guard now.timeIntervalSince(lastPreviewToolToggleAt) >= previewToolToggleDebounceInterval else {
+                return
+            }
+
+            previewToolMode = .none
+            lastPreviewToolToggleAt = now
+            syncStatusFromRenderer()
+            return
+        }
+
+        previewToolMode = mode
+        lastPreviewToolToggleAt = now
+        setPreviewInteractionStatus(mode.instruction)
+    }
+
+    private func setPreviewInteractionStatus(_ message: String) {
+        statusMessage = message
+        isRendererError = false
+    }
+
+    private func syncStatusFromRenderer() {
+        statusMessage = renderer.statusMessage
+        isRendererError = renderer.isError
     }
 }

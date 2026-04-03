@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import WebKit
 
@@ -7,9 +8,11 @@ final class MermaidRenderEngine: NSObject {
 
     private let userContentController = WKUserContentController()
     var statusHandler: ((String, Bool) -> Void)?
+    var previewEditHandler: ((MermaidPreviewEditRequest) -> Void)?
     private var isPageReady = false
     private var pendingActions: [() -> Void] = []
     private var didLoadInitialShell = false
+    private var currentPreviewZoom: CGFloat = DiagramPreviewZoomState.defaultScale
 
     init(statusHandler: ((String, Bool) -> Void)? = nil) {
         self.statusHandler = statusHandler
@@ -21,14 +24,17 @@ final class MermaidRenderEngine: NSObject {
         super.init()
 
         userContentController.add(self, name: "mermaidStatus")
+        userContentController.add(self, name: "mermaidPreviewEdit")
         webView.navigationDelegate = self
         webView.allowsBackForwardNavigationGestures = false
+        webView.allowsMagnification = true
         webView.setValue(false, forKey: "drawsBackground")
         loadShell()
     }
 
     deinit {
         userContentController.removeScriptMessageHandler(forName: "mermaidStatus")
+        userContentController.removeScriptMessageHandler(forName: "mermaidPreviewEdit")
     }
 
     func renderPreview(_ request: MermaidPreviewRequest, completion: ((Result<Void, Error>) -> Void)? = nil) {
@@ -84,6 +90,11 @@ final class MermaidRenderEngine: NSObject {
         }
     }
 
+    func setPreviewZoom(_ scale: CGFloat, animated: Bool = true) {
+        currentPreviewZoom = min(max(scale, DiagramPreviewZoomState.minimumScale), DiagramPreviewZoomState.maximumScale)
+        applyPreviewZoom(animated: animated)
+    }
+
     private func callAsync<T: Decodable>(
         body: String,
         payload: some Encodable,
@@ -137,6 +148,18 @@ final class MermaidRenderEngine: NSObject {
         webView.loadFileURL(htmlURL, allowingReadAccessTo: baseURL)
     }
 
+    private func applyPreviewZoom(animated: Bool) {
+        let center = CGPoint(x: webView.bounds.midX, y: webView.bounds.midY)
+        if animated {
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.14
+                webView.animator().setMagnification(currentPreviewZoom, centeredAt: center)
+            }
+        } else {
+            webView.setMagnification(currentPreviewZoom, centeredAt: center)
+        }
+    }
+
     private func jsonDictionary(from value: some Encodable) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         let object = try JSONSerialization.jsonObject(with: data)
@@ -171,6 +194,7 @@ private enum MermaidResourceBundle {
 extension MermaidRenderEngine: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         isPageReady = true
+        applyPreviewZoom(animated: false)
         if !didLoadInitialShell {
             didLoadInitialShell = true
             statusHandler?("Preview ready.", false)
@@ -197,15 +221,29 @@ extension MermaidRenderEngine: WKNavigationDelegate {
 
 extension MermaidRenderEngine: WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard
-            message.name == "mermaidStatus",
-            let payload = message.body as? [String: Any],
-            let messageText = payload["message"] as? String
-        else {
+        switch message.name {
+        case "mermaidStatus":
+            guard
+                let payload = message.body as? [String: Any],
+                let messageText = payload["message"] as? String
+            else {
+                return
+            }
+
+            let isError = payload["isError"] as? Bool ?? false
+            statusHandler?(messageText, isError)
+        case "mermaidPreviewEdit":
+            guard
+                let payload = message.body as? [String: Any],
+                let tokenID = payload["tokenID"] as? String,
+                let newText = payload["newText"] as? String
+            else {
+                return
+            }
+
+            previewEditHandler?(MermaidPreviewEditRequest(tokenID: tokenID, newText: newText))
+        default:
             return
         }
-
-        let isError = payload["isError"] as? Bool ?? false
-        statusHandler?(messageText, isError)
     }
 }

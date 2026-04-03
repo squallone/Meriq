@@ -2,6 +2,12 @@
 
 This document is for maintainers preparing builds for distribution outside the Mac App Store.
 
+For general product and architecture context, see:
+
+- [README](../README.md)
+- [Architecture](architecture.md)
+- [UI and interaction model](ui.md)
+
 Apple’s current direct-distribution flow is:
 - sign with a `Developer ID Application` certificate
 - enable hardened runtime
@@ -35,7 +41,7 @@ Using an App Store Connect API key:
 
 ```bash
 Scripts/store_notary_credentials.sh \
-  --profile mermaid-notary \
+  --profile meriq-notary \
   --key /path/to/AuthKey_ABC123XYZ.p8 \
   --key-id ABC123XYZ \
   --issuer 00000000-0000-0000-0000-000000000000
@@ -45,7 +51,7 @@ Using Apple ID credentials:
 
 ```bash
 Scripts/store_notary_credentials.sh \
-  --profile mermaid-notary \
+  --profile meriq-notary \
   --apple-id you@example.com \
   --team-id ABCDE12345
 ```
@@ -57,7 +63,7 @@ This command archives the app, exports a Developer ID-signed build, verifies the
 ```bash
 Scripts/export_notarized_release.sh \
   --team-id ABCDE12345 \
-  --notary-profile mermaid-notary
+  --notary-profile meriq-notary
 ```
 
 If you only want the Developer ID-signed export without notarization yet:
