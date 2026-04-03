@@ -9,6 +9,7 @@ final class MermaidRenderEngine: NSObject {
     var statusHandler: ((String, Bool) -> Void)?
     private var isPageReady = false
     private var pendingActions: [() -> Void] = []
+    private var didLoadInitialShell = false
 
     init(statusHandler: ((String, Bool) -> Void)? = nil) {
         self.statusHandler = statusHandler
@@ -22,6 +23,7 @@ final class MermaidRenderEngine: NSObject {
         userContentController.add(self, name: "mermaidStatus")
         webView.navigationDelegate = self
         webView.allowsBackForwardNavigationGestures = false
+        webView.setValue(false, forKey: "drawsBackground")
         loadShell()
     }
 
@@ -130,6 +132,7 @@ final class MermaidRenderEngine: NSObject {
             return
         }
 
+        isPageReady = false
         let baseURL = htmlURL.deletingLastPathComponent()
         webView.loadFileURL(htmlURL, allowingReadAccessTo: baseURL)
     }
@@ -168,10 +171,27 @@ private enum MermaidResourceBundle {
 extension MermaidRenderEngine: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         isPageReady = true
+        if !didLoadInitialShell {
+            didLoadInitialShell = true
+            statusHandler?("Preview ready.", false)
+        }
 
         let actions = pendingActions
         pendingActions.removeAll()
         actions.forEach { $0() }
+    }
+
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+        statusHandler?("Could not load the preview shell: \(error.localizedDescription)", true)
+    }
+
+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        statusHandler?("Could not start the preview shell: \(error.localizedDescription)", true)
+    }
+
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        statusHandler?("Preview content was interrupted. Reloading the canvas…", true)
+        loadShell()
     }
 }
 

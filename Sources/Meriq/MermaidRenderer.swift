@@ -4,16 +4,15 @@ import WebKit
 
 @MainActor
 final class MermaidRenderer: ObservableObject {
-    @Published var source = MermaidDocumentSamples.defaultDiagram
-    @Published private(set) var statusMessage = "Paste Mermaid syntax, choose a theme, and click Render."
+    @Published private(set) var statusMessage = "Create or open a diagram to begin rendering."
     @Published private(set) var isError = false
-    @Published private(set) var selectedThemeID = MermaidThemePreset.defaultPreset.id
-    @Published private(set) var exportOptions = MermaidExportOptions()
 
     let webView: WKWebView
+    var statusObserver: ((String, Bool) -> Void)?
 
     private let previewEngine: MermaidRenderEngine
     private let exportEngine: MermaidRenderEngine
+    private var currentDraft: DiagramDraft?
 
     init() {
         let previewEngine = MermaidRenderEngine()
@@ -25,8 +24,6 @@ final class MermaidRenderer: ObservableObject {
         previewEngine.statusHandler = { [weak self] message, isError in
             self?.setStatus(message, isError: isError)
         }
-
-        renderPreview()
     }
 
     var availableThemes: [MermaidThemePreset] {
@@ -34,54 +31,40 @@ final class MermaidRenderer: ObservableObject {
     }
 
     var currentTheme: MermaidThemePreset {
-        MermaidThemePreset.preset(id: selectedThemeID)
+        MermaidThemePreset.preset(id: currentDraft?.previewThemeID ?? MermaidThemePreset.defaultPreset.id)
     }
 
-    var exportBackgroundMode: MermaidExportBackgroundStyle.Mode {
-        exportOptions.background.mode
-    }
+    func apply(draft: DiagramDraft, shouldRender: Bool = true) {
+        currentDraft = DiagramDraft(
+            id: draft.id,
+            name: draft.name,
+            source: Self.sanitizedSource(draft.source),
+            previewThemeID: draft.previewThemeID,
+            exportBackground: draft.exportBackground,
+            isFavorite: draft.isFavorite
+        )
 
-    var exportBackgroundColor: Color {
-        Color(hexString: exportOptions.background.customColorHex)
-    }
-
-    func loadSample() {
-        source = MermaidDocumentSamples.defaultDiagram
-        renderPreview()
-    }
-
-    func updateSourceFromPasteboard(_ rawSource: String) {
-        source = sanitizedSource(rawSource)
-        renderPreview()
-    }
-
-    func selectTheme(_ themeID: String) {
-        guard selectedThemeID != themeID else {
-            return
+        if shouldRender {
+            renderPreview()
         }
-
-        selectedThemeID = themeID
-        renderPreview()
     }
 
-    func selectExportBackgroundMode(_ mode: MermaidExportBackgroundStyle.Mode) {
-        exportOptions.background.mode = mode
-        setStatus(exportDescription(for: mode), isError: false)
-    }
-
-    func selectExportBackgroundColor(_ color: Color) {
-        exportOptions.background.customColorHex = color.hexRGBString
-        setStatus("Updated the custom export background color.", isError: false)
+    func clear() {
+        currentDraft = nil
+        setStatus("Create or open a diagram to begin rendering.", isError: false)
     }
 
     func renderPreview() {
+        guard let draft = currentDraft else {
+            setStatus("Choose a diagram before rendering.", isError: true)
+            return
+        }
+
         setStatus("Rendering diagram…", isError: false)
 
-        let preparedSource = prepareRenderableSource()
-
         let request = MermaidPreviewRequest(
-            source: preparedSource,
-            theme: currentTheme,
+            source: draft.source,
+            theme: MermaidThemePreset.preset(id: draft.previewThemeID),
             padding: 18
         )
 
@@ -94,10 +77,11 @@ final class MermaidRenderer: ObservableObject {
         }
     }
 
-    func copySVGToClipboard() {
+    func copySVGToClipboard(scale: Double = 2.0) {
+        guard currentDraft != nil else { return }
         setStatus("Preparing SVG export…", isError: false)
 
-        exportEngine.exportSVG(buildExportRequest()) { [weak self] result in
+        exportEngine.exportSVG(buildExportRequest(scale: scale)) { [weak self] result in
             guard let self else { return }
 
             switch result {
@@ -111,10 +95,11 @@ final class MermaidRenderer: ObservableObject {
         }
     }
 
-    func copyImageToClipboard() {
+    func copyImageToClipboard(scale: Double = 2.0) {
+        guard currentDraft != nil else { return }
         setStatus("Preparing PNG export…", isError: false)
 
-        exportEngine.exportPNG(buildExportRequest()) { [weak self] result in
+        exportEngine.exportPNG(buildExportRequest(scale: scale)) { [weak self] result in
             guard let self else { return }
 
             switch result {
@@ -133,7 +118,8 @@ final class MermaidRenderer: ObservableObject {
         }
     }
 
-    func exportSVGToFile() {
+    func exportSVGToFile(scale: Double = 2.0) {
+        guard currentDraft != nil else { return }
         guard let destinationURL = chooseDestinationURL(for: .svg) else {
             setStatus("SVG export cancelled.", isError: false)
             return
@@ -141,7 +127,7 @@ final class MermaidRenderer: ObservableObject {
 
         setStatus("Preparing SVG export…", isError: false)
 
-        exportEngine.exportSVG(buildExportRequest()) { [weak self] result in
+        exportEngine.exportSVG(buildExportRequest(scale: scale)) { [weak self] result in
             guard let self else { return }
 
             switch result {
@@ -158,7 +144,8 @@ final class MermaidRenderer: ObservableObject {
         }
     }
 
-    func exportPNGToFile() {
+    func exportPNGToFile(scale: Double = 2.0) {
+        guard currentDraft != nil else { return }
         guard let destinationURL = chooseDestinationURL(for: .png) else {
             setStatus("PNG export cancelled.", isError: false)
             return
@@ -166,7 +153,7 @@ final class MermaidRenderer: ObservableObject {
 
         setStatus("Preparing PNG export…", isError: false)
 
-        exportEngine.exportPNG(buildExportRequest()) { [weak self] result in
+        exportEngine.exportPNG(buildExportRequest(scale: scale)) { [weak self] result in
             guard let self else { return }
 
             switch result {
@@ -186,17 +173,43 @@ final class MermaidRenderer: ObservableObject {
     func setStatus(_ message: String, isError: Bool) {
         statusMessage = message
         self.isError = isError
+        statusObserver?(message, isError)
     }
 
-    private func buildExportRequest() -> MermaidExportRequest {
-        let preparedSource = prepareRenderableSource()
+    func copyToClipboard(variant: MermaidExportVariant, scale: Double) {
+        switch variant {
+        case .svg:
+            copySVGToClipboard(scale: scale)
+        case .png:
+            copyImageToClipboard(scale: scale)
+        }
+    }
+
+    func exportToFile(variant: MermaidExportVariant, scale: Double) {
+        switch variant {
+        case .svg:
+            exportSVGToFile(scale: scale)
+        case .png:
+            exportPNGToFile(scale: scale)
+        }
+    }
+
+    private func buildExportRequest(scale: Double) -> MermaidExportRequest {
+        let draft = currentDraft ?? DiagramDraft(
+            id: UUID(),
+            name: "Untitled",
+            source: MermaidDocumentSamples.defaultDiagram,
+            previewThemeID: MermaidThemePreset.defaultPreset.id,
+            exportBackground: .theme,
+            isFavorite: false
+        )
 
         return MermaidExportRequest(
-            source: preparedSource,
-            theme: currentTheme,
-            background: exportOptions.background.resolvedBackground(theme: currentTheme),
-            padding: exportOptions.padding,
-            scale: exportOptions.scale
+            source: draft.source,
+            theme: MermaidThemePreset.preset(id: draft.previewThemeID),
+            background: draft.exportBackground.resolvedBackground(theme: MermaidThemePreset.preset(id: draft.previewThemeID)),
+            padding: 28,
+            scale: scale
         )
     }
 
@@ -242,28 +255,7 @@ final class MermaidRenderer: ObservableObject {
         return data
     }
 
-    private func exportDescription(for mode: MermaidExportBackgroundStyle.Mode) -> String {
-        switch mode {
-        case .theme:
-            "Exports will use the selected theme background."
-        case .transparent:
-            "Exports will use a transparent background."
-        case .custom:
-            "Exports will use the selected custom background color."
-        }
-    }
-
-    private func prepareRenderableSource() -> String {
-        let cleaned = sanitizedSource(source)
-
-        if cleaned != source {
-            source = cleaned
-        }
-
-        return cleaned
-    }
-
-    private func sanitizedSource(_ rawSource: String) -> String {
+    static func sanitizedSource(_ rawSource: String) -> String {
         let trimmed = rawSource.trimmingCharacters(in: .whitespacesAndNewlines)
 
         guard trimmed.hasPrefix("```"), trimmed.hasSuffix("```") else {
@@ -286,14 +278,14 @@ final class MermaidRenderer: ObservableObject {
     }
 }
 
-private enum MermaidDocumentSamples {
+enum MermaidDocumentSamples {
     static let defaultDiagram = """
     flowchart LR
-        A[Paste Mermaid syntax] --> B(Render in the app)
-        B --> C{Need to share it?}
-        C -->|Text| D[Copy source]
-        C -->|Vector| E[Copy SVG]
-        C -->|Image| F[Copy rendered image]
+        A[Create categories] --> B[Store diagrams locally]
+        B --> C{Share output?}
+        C -->|Text| D[Copy Mermaid source]
+        C -->|Vector| E[Export SVG]
+        C -->|Image| F[Export PNG]
     """
 }
 

@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D723C786C4683FE7C46694C9"
+               BlueprintIdentifier = "0E9C150D6B79C5C2ADB57C0F"
                BuildableName = "Meriq.app"
                BlueprintName = "Meriq"
                ReferencedContainer = "container:Meriq.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D723C786C4683FE7C46694C9"
+            BlueprintIdentifier = "0E9C150D6B79C5C2ADB57C0F"
             BuildableName = "Meriq.app"
             BlueprintName = "Meriq"
             ReferencedContainer = "container:Meriq.xcodeproj">
@@ -53,7 +53,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D723C786C4683FE7C46694C9"
+            BlueprintIdentifier = "0E9C150D6B79C5C2ADB57C0F"
             BuildableName = "Meriq.app"
             BlueprintName = "Meriq"
             ReferencedContainer = "container:Meriq.xcodeproj">
@@ -70,7 +70,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D723C786C4683FE7C46694C9"
+            BlueprintIdentifier = "0E9C150D6B79C5C2ADB57C0F"
             BuildableName = "Meriq.app"
             BlueprintName = "Meriq"
             ReferencedContainer = "container:Meriq.xcodeproj">

@@ -44,13 +44,9 @@ target.build_configurations.each do |configuration|
     end
 end
 
-source_files = %w[
-    MeriqApp.swift
-    MermaidConfiguration.swift
-    ContentView.swift
-    MermaidRenderEngine.swift
-    MermaidRenderer.swift
-].map { |file_name| app_group.new_file(file_name) }
+source_files = Dir.glob(File.join(root, 'Sources', 'Meriq', '*.swift'))
+    .sort
+    .map { |path| app_group.new_file(File.basename(path)) }
 
 target.add_file_references(source_files)
 

@@ -8,9 +8,10 @@ struct MermaidThemePreset: Identifiable, Codable, Equatable {
     let diagram: MermaidDiagramPalette
     let preview: MermaidPreviewPalette
 
-    static let defaultPreset = sand
+    static let defaultPreset = graphite
 
     static let all: [MermaidThemePreset] = [
+        midnight,
         sand,
         ocean,
         graphite
@@ -116,6 +117,39 @@ struct MermaidThemePreset: Identifiable, Codable, Equatable {
             placeholderBackground: "rgba(255, 255, 255, 0.80)",
             placeholderBorderColor: "rgba(26, 32, 41, 0.14)",
             placeholderTextColor: "rgba(26, 32, 41, 0.62)"
+        )
+    )
+
+    private static let midnight = MermaidThemePreset(
+        id: "midnight",
+        name: "Midnight",
+        diagram: MermaidDiagramPalette(
+            background: "#11161D",
+            primaryColor: "#1F8A70",
+            primaryTextColor: "#E7F3EE",
+            primaryBorderColor: "#5ED5B6",
+            lineColor: "#A3C8FF",
+            secondaryColor: "#203041",
+            tertiaryColor: "#2F243C",
+            fontFamily: "SF Pro Text, -apple-system, BlinkMacSystemFont, sans-serif"
+        ),
+        preview: MermaidPreviewPalette(
+            pageStartColor: "#091019",
+            pageEndColor: "#0E1824",
+            glowColorOne: "rgba(67, 188, 170, 0.14)",
+            glowColorTwo: "rgba(90, 133, 240, 0.14)",
+            pageTextColor: "#E7EDF7",
+            canvasBackground: "rgba(16, 23, 33, 0.96)",
+            canvasBorderColor: "rgba(144, 173, 230, 0.12)",
+            canvasShadowColor: "rgba(0, 0, 0, 0.32)",
+            captionBackground: "rgba(75, 189, 170, 0.10)",
+            captionTextColor: "#8CDCD0",
+            errorBackground: "rgba(70, 24, 24, 0.85)",
+            errorBorderColor: "rgba(255, 122, 122, 0.18)",
+            errorTextColor: "#FFB8B8",
+            placeholderBackground: "rgba(255, 255, 255, 0.04)",
+            placeholderBorderColor: "rgba(255, 255, 255, 0.12)",
+            placeholderTextColor: "rgba(231, 237, 247, 0.62)"
         )
     )
 }
