@@ -449,11 +449,32 @@
             }
         }
 
+        function ensureSVGNamespaces(svgMarkup) {
+            let normalized = String(svgMarkup || "");
+
+            if (normalized.includes("xlink:") && !normalized.includes("xmlns:xlink=")) {
+                normalized = normalized.replace(
+                    /<svg\b/,
+                    '<svg xmlns:xlink="http://www.w3.org/1999/xlink"'
+                );
+            }
+
+            if (!normalized.includes('xmlns="http://www.w3.org/2000/svg"')) {
+                normalized = normalized.replace(
+                    /<svg\b/,
+                    '<svg xmlns="http://www.w3.org/2000/svg"'
+                );
+            }
+
+            return normalized;
+        }
+
         function normalizeSVG(svgMarkup, padding, backgroundColor) {
+            const namespaceSafeMarkup = ensureSVGNamespaces(svgMarkup);
             const parser = new DOMParser();
-            const documentRoot = parser.parseFromString(svgMarkup, "image/svg+xml");
+            const documentRoot = parser.parseFromString(namespaceSafeMarkup, "image/svg+xml");
             const svgElement = documentRoot.documentElement;
-            const dimensions = measuredBounds(svgMarkup) || svgDimensions(svgElement);
+            const dimensions = measuredBounds(namespaceSafeMarkup) || svgDimensions(svgElement);
             const exportPadding = Math.max(0, Number(padding || 0));
 
             const totalWidth = dimensions.width + exportPadding * 2;
@@ -478,6 +499,7 @@
 
             svgElement.appendChild(group);
             svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            svgElement.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
             svgElement.setAttribute("width", String(totalWidth));
             svgElement.setAttribute("height", String(totalHeight));
             svgElement.setAttribute("viewBox", `0 0 ${totalWidth} ${totalHeight}`);
@@ -492,11 +514,15 @@
             };
         }
 
-        async function renderSVG(source, theme, options) {
+        async function renderMermaid(source, theme) {
             mermaid.initialize(buildMermaidConfiguration(theme));
 
             const renderId = `mermaid-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-            const { svg, bindFunctions } = await mermaid.render(renderId, source);
+            return mermaid.render(renderId, source);
+        }
+
+        async function renderSVG(source, theme, options) {
+            const { svg, bindFunctions } = await renderMermaid(source, theme);
             const backgroundColor = options.background && options.background.isTransparent ? null : options.background && options.background.colorHex;
             const normalized = normalizeSVG(svg, options.padding, backgroundColor);
 
@@ -560,10 +586,7 @@
             diagram.innerHTML = '<div class="placeholder">Rendering diagram...</div>';
 
             try {
-                const result = await renderSVG(payload.source, payload.theme, {
-                    background: { isTransparent: true, colorHex: null },
-                    padding: payload.padding
-                });
+                const result = await renderMermaid(payload.source, payload.theme);
 
                 diagram.innerHTML = result.svg;
 
