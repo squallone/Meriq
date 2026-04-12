@@ -11,36 +11,134 @@
 		296C8B3AC26F33014B5C9CB4 /* StudioStores.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB197AE97E0D383BC24B96C6 /* StudioStores.swift */; };
 		2F6BEC43251C7E754F0A48EA /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = BA9B197859417D13CB50F894 /* index.html */; };
 		2FFCFBFC3D55F78AAEAEE21B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A60C36157EEE6C8A0E13A4 /* ContentView.swift */; };
-		3928900793D04E39C073A546 /* StudioModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DAA583FE55FB9A578F6B766 /* StudioModels.swift */; };
 		49A4E2C8EA46CFAD1C42371C /* MermaidRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B370830A6CD31D605AD4147 /* MermaidRenderer.swift */; };
-		648DC2B14241A2DD0447186F /* StudioViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE7B8E329E092AE74470BB57 /* StudioViews.swift */; };
+		840C70432F8B5F25008D26EA /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70422F8B5F25008D26EA /* LibraryStore.swift */; };
+		840C70452F8B5F7F008D26EA /* SwiftDataCategoryRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70442F8B5F7F008D26EA /* SwiftDataCategoryRepository.swift */; };
+		840C70472F8B5FEA008D26EA /* CategoryEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70462F8B5FEA008D26EA /* CategoryEntity.swift */; };
+		840C704A2F8B603C008D26EA /* Diagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70492F8B603C008D26EA /* Diagram.swift */; };
+		840C704C2F8B6047008D26EA /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C704B2F8B6047008D26EA /* Category.swift */; };
+		840C704E2F8B604E008D26EA /* SidebarDiagramSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C704D2F8B604E008D26EA /* SidebarDiagramSection.swift */; };
+		840C70502F8B6059008D26EA /* MermaidExportConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C704F2F8B6059008D26EA /* MermaidExportConfiguration.swift */; };
+		840C70522F8B6060008D26EA /* DiagramPreviewZoomState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70512F8B6060008D26EA /* DiagramPreviewZoomState.swift */; };
+		840C70542F8B6069008D26EA /* DiagramTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70532F8B6069008D26EA /* DiagramTemplate.swift */; };
+		840C70562F8B6071008D26EA /* DiagramDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70552F8B6071008D26EA /* DiagramDraft.swift */; };
+		840C70592F8B60F7008D26EA /* MermaidStudioTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70582F8B60F7008D26EA /* MermaidStudioTemplates.swift */; };
+		840C705B2F8B60FF008D26EA /* MermaidStudioSymbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C705A2F8B60FF008D26EA /* MermaidStudioSymbols.swift */; };
+		840C705D2F8B6114008D26EA /* DiagramScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C705C2F8B6114008D26EA /* DiagramScope.swift */; };
+		840C705F2F8B6120008D26EA /* PreviewToolMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C705E2F8B6120008D26EA /* PreviewToolMode.swift */; };
+		840C70612F8B612C008D26EA /* WorkspaceMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70602F8B612C008D26EA /* WorkspaceMode.swift */; };
+		840C70632F8B613C008D26EA /* SidebarSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70622F8B613C008D26EA /* SidebarSelection.swift */; };
+		840C70652F8B6581008D26EA /* MermaidSourceEditingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70642F8B6581008D26EA /* MermaidSourceEditingEngine.swift */; };
+		840C70672F8B65CF008D26EA /* MermaidSourceEditResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70662F8B65CF008D26EA /* MermaidSourceEditResult.swift */; };
+		840C70692F8B65DD008D26EA /* MermaidPreviewEditRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70682F8B65DD008D26EA /* MermaidPreviewEditRequest.swift */; };
+		840C706B2F8B65EA008D26EA /* MermaidEditableToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C706A2F8B65EA008D26EA /* MermaidEditableToken.swift */; };
+		840C706D2F8B65F3008D26EA /* MermaidEditableTokenKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C706C2F8B65F3008D26EA /* MermaidEditableTokenKind.swift */; };
+		840C70702F8B6623008D26EA /* MermaidThemePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C706F2F8B6623008D26EA /* MermaidThemePreset.swift */; };
+		840C70722F8B6634008D26EA /* MermaidDiagramPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70712F8B6634008D26EA /* MermaidDiagramPalette.swift */; };
+		840C70742F8B663D008D26EA /* MermaidPreviewPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70732F8B663D008D26EA /* MermaidPreviewPalette.swift */; };
+		840C70762F8B6650008D26EA /* MermaidExportOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70752F8B6650008D26EA /* MermaidExportOptions.swift */; };
+		840C70782F8B6670008D26EA /* NSColor+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70772F8B6670008D26EA /* NSColor+Utils.swift */; };
+		840C707C2F8B6701008D26EA /* RootStudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C707B2F8B6701008D26EA /* RootStudioView.swift */; };
+		840C707E2F8B671B008D26EA /* StudioChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C707D2F8B671B008D26EA /* StudioChrome.swift */; };
+		840C70802F8B6730008D26EA /* PreviewToolCursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C707F2F8B6730008D26EA /* PreviewToolCursor.swift */; };
+		840C70822F8B6747008D26EA /* StudioSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70812F8B6747008D26EA /* StudioSidebarView.swift */; };
+		840C70842F8B6765008D26EA /* SidebarScopeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70832F8B6765008D26EA /* SidebarScopeButton.swift */; };
+		840C70862F8B6776008D26EA /* SidebarCategoryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70852F8B6776008D26EA /* SidebarCategoryButton.swift */; };
+		840C70882F8B6781008D26EA /* SidebarInlineBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70872F8B6781008D26EA /* SidebarInlineBrowser.swift */; };
+		840C708A2F8B678E008D26EA /* SidebarDiagramButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70892F8B678E008D26EA /* SidebarDiagramButton.swift */; };
+		840C708C2F8B679B008D26EA /* TemplateWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C708B2F8B679B008D26EA /* TemplateWorkspaceView.swift */; };
+		840C708E2F8B67A6008D26EA /* TemplateListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C708D2F8B67A6008D26EA /* TemplateListView.swift */; };
+		840C70902F8B67BF008D26EA /* StudioWorkspaceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C708F2F8B67BF008D26EA /* StudioWorkspaceContainer.swift */; };
+		840C70922F8B67CD008D26EA /* MermaidEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70912F8B67CD008D26EA /* MermaidEditorView.swift */; };
+		840C70942F8B67D5008D26EA /* PreviewDetailColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70932F8B67D5008D26EA /* PreviewDetailColumn.swift */; };
+		840C70962F8B67E4008D26EA /* MermaidPreviewPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70952F8B67E4008D26EA /* MermaidPreviewPane.swift */; };
+		840C70982F8B6801008D26EA /* StudioBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70972F8B6801008D26EA /* StudioBanner.swift */; };
+		840C709A2F8B6838008D26EA /* StudioEmptyState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70992F8B6838008D26EA /* StudioEmptyState.swift */; };
+		840C709D2F8B685B008D26EA /* PreviewToolOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C709C2F8B685B008D26EA /* PreviewToolOverlay.swift */; };
+		840C709F2F8B6865008D26EA /* PreviewClickCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C709E2F8B6865008D26EA /* PreviewClickCaptureView.swift */; };
+		840C70A12F8B6877008D26EA /* PreviewCaptureNSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70A02F8B6877008D26EA /* PreviewCaptureNSView.swift */; };
+		840C70A32F8B68AA008D26EA /* PreviewShortcutMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70A22F8B68AA008D26EA /* PreviewShortcutMonitor.swift */; };
+		840C70A52F8B68C1008D26EA /* DocumentBottomPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70A42F8B68C1008D26EA /* DocumentBottomPanel.swift */; };
+		840C70A72F8B68D4008D26EA /* PreviewGridBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70A62F8B68D4008D26EA /* PreviewGridBackground.swift */; };
+		840C70A92F8B68E5008D26EA /* DocumentInspectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70A82F8B68E5008D26EA /* DocumentInspectorView.swift */; };
+		840C70AB2F8B68F4008D26EA /* IconPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70AA2F8B68F4008D26EA /* IconPickerView.swift */; };
+		840C70AD2F8B68FE008D26EA /* CategoryEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70AC2F8B68FE008D26EA /* CategoryEditorSheet.swift */; };
+		840C70AF2F8B6907008D26EA /* ExportPopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840C70AE2F8B6907008D26EA /* ExportPopoverView.swift */; };
 		8F018D961FB1CD7F3A6B616B /* MeriqApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C771A114AA629E0008B1FA /* MeriqApp.swift */; };
-		B5B8C096BE534E13D5411359 /* StudioRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEA54B1AA557FAC2EA94CA9 /* StudioRepositories.swift */; };
-		B6A17F66FDBB4B9D8B181D25 /* MermaidSourceEditing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C6E3654A21641A929ECA65 /* MermaidSourceEditing.swift */; };
+		B5B8C096BE534E13D5411359 /* SwiftDataDiagramRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFEA54B1AA557FAC2EA94CA9 /* SwiftDataDiagramRepository.swift */; };
 		CC2AF2161680D1378D874043 /* mermaid.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 04CFF2D6D2EC9249EF0FD9DF /* mermaid.min.js */; };
 		D48EE586B877E913D16BA55B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67023FC902EB5FF08AA0A4EF /* Cocoa.framework */; };
 		F22F00A7B4606055BF0FA169 /* MermaidRenderEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12DB573CC438E91AED971FE0 /* MermaidRenderEngine.swift */; };
-		F68B33AD63A04AECFB67463E /* StudioPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374F96CA25AB467711B078F3 /* StudioPersistence.swift */; };
+		F68B33AD63A04AECFB67463E /* DiagramEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374F96CA25AB467711B078F3 /* DiagramEntity.swift */; };
 		FDA296B86B830E10612FDBD5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 233AE4C7BA9591690489D0E2 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0099970D2DB02AD283556E9E /* Meriq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Meriq.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		04CFF2D6D2EC9249EF0FD9DF /* mermaid.min.js */ = {isa = PBXFileReference; includeInIndex = 1; path = mermaid.min.js; sourceTree = "<group>"; };
+		04CFF2D6D2EC9249EF0FD9DF /* mermaid.min.js */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.javascript; path = mermaid.min.js; sourceTree = "<group>"; };
 		12DB573CC438E91AED971FE0 /* MermaidRenderEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidRenderEngine.swift; sourceTree = "<group>"; };
 		16E5CD0A225AAEF73C2D03E7 /* MermaidConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidConfiguration.swift; sourceTree = "<group>"; };
 		233AE4C7BA9591690489D0E2 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		28A60C36157EEE6C8A0E13A4 /* ContentView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		374F96CA25AB467711B078F3 /* StudioPersistence.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioPersistence.swift; sourceTree = "<group>"; };
-		3DAA583FE55FB9A578F6B766 /* StudioModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioModels.swift; sourceTree = "<group>"; };
+		374F96CA25AB467711B078F3 /* DiagramEntity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DiagramEntity.swift; sourceTree = "<group>"; };
 		46C771A114AA629E0008B1FA /* MeriqApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MeriqApp.swift; sourceTree = "<group>"; };
 		67023FC902EB5FF08AA0A4EF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		7B370830A6CD31D605AD4147 /* MermaidRenderer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidRenderer.swift; sourceTree = "<group>"; };
-		AE7B8E329E092AE74470BB57 /* StudioViews.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioViews.swift; sourceTree = "<group>"; };
-		BA9B197859417D13CB50F894 /* index.html */ = {isa = PBXFileReference; includeInIndex = 1; path = index.html; sourceTree = "<group>"; };
+		840C70422F8B5F25008D26EA /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
+		840C70442F8B5F7F008D26EA /* SwiftDataCategoryRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataCategoryRepository.swift; sourceTree = "<group>"; };
+		840C70462F8B5FEA008D26EA /* CategoryEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryEntity.swift; sourceTree = "<group>"; };
+		840C70492F8B603C008D26EA /* Diagram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diagram.swift; sourceTree = "<group>"; };
+		840C704B2F8B6047008D26EA /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		840C704D2F8B604E008D26EA /* SidebarDiagramSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarDiagramSection.swift; sourceTree = "<group>"; };
+		840C704F2F8B6059008D26EA /* MermaidExportConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidExportConfiguration.swift; sourceTree = "<group>"; };
+		840C70512F8B6060008D26EA /* DiagramPreviewZoomState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramPreviewZoomState.swift; sourceTree = "<group>"; };
+		840C70532F8B6069008D26EA /* DiagramTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramTemplate.swift; sourceTree = "<group>"; };
+		840C70552F8B6071008D26EA /* DiagramDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramDraft.swift; sourceTree = "<group>"; };
+		840C70582F8B60F7008D26EA /* MermaidStudioTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidStudioTemplates.swift; sourceTree = "<group>"; };
+		840C705A2F8B60FF008D26EA /* MermaidStudioSymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidStudioSymbols.swift; sourceTree = "<group>"; };
+		840C705C2F8B6114008D26EA /* DiagramScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramScope.swift; sourceTree = "<group>"; };
+		840C705E2F8B6120008D26EA /* PreviewToolMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewToolMode.swift; sourceTree = "<group>"; };
+		840C70602F8B612C008D26EA /* WorkspaceMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceMode.swift; sourceTree = "<group>"; };
+		840C70622F8B613C008D26EA /* SidebarSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarSelection.swift; sourceTree = "<group>"; };
+		840C70642F8B6581008D26EA /* MermaidSourceEditingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidSourceEditingEngine.swift; sourceTree = "<group>"; };
+		840C70662F8B65CF008D26EA /* MermaidSourceEditResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidSourceEditResult.swift; sourceTree = "<group>"; };
+		840C70682F8B65DD008D26EA /* MermaidPreviewEditRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidPreviewEditRequest.swift; sourceTree = "<group>"; };
+		840C706A2F8B65EA008D26EA /* MermaidEditableToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidEditableToken.swift; sourceTree = "<group>"; };
+		840C706C2F8B65F3008D26EA /* MermaidEditableTokenKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidEditableTokenKind.swift; sourceTree = "<group>"; };
+		840C706F2F8B6623008D26EA /* MermaidThemePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidThemePreset.swift; sourceTree = "<group>"; };
+		840C70712F8B6634008D26EA /* MermaidDiagramPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidDiagramPalette.swift; sourceTree = "<group>"; };
+		840C70732F8B663D008D26EA /* MermaidPreviewPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidPreviewPalette.swift; sourceTree = "<group>"; };
+		840C70752F8B6650008D26EA /* MermaidExportOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidExportOptions.swift; sourceTree = "<group>"; };
+		840C70772F8B6670008D26EA /* NSColor+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSColor+Utils.swift"; sourceTree = "<group>"; };
+		840C707B2F8B6701008D26EA /* RootStudioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootStudioView.swift; sourceTree = "<group>"; };
+		840C707D2F8B671B008D26EA /* StudioChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioChrome.swift; sourceTree = "<group>"; };
+		840C707F2F8B6730008D26EA /* PreviewToolCursor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewToolCursor.swift; sourceTree = "<group>"; };
+		840C70812F8B6747008D26EA /* StudioSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioSidebarView.swift; sourceTree = "<group>"; };
+		840C70832F8B6765008D26EA /* SidebarScopeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarScopeButton.swift; sourceTree = "<group>"; };
+		840C70852F8B6776008D26EA /* SidebarCategoryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCategoryButton.swift; sourceTree = "<group>"; };
+		840C70872F8B6781008D26EA /* SidebarInlineBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarInlineBrowser.swift; sourceTree = "<group>"; };
+		840C70892F8B678E008D26EA /* SidebarDiagramButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarDiagramButton.swift; sourceTree = "<group>"; };
+		840C708B2F8B679B008D26EA /* TemplateWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateWorkspaceView.swift; sourceTree = "<group>"; };
+		840C708D2F8B67A6008D26EA /* TemplateListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateListView.swift; sourceTree = "<group>"; };
+		840C708F2F8B67BF008D26EA /* StudioWorkspaceContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioWorkspaceContainer.swift; sourceTree = "<group>"; };
+		840C70912F8B67CD008D26EA /* MermaidEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidEditorView.swift; sourceTree = "<group>"; };
+		840C70932F8B67D5008D26EA /* PreviewDetailColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewDetailColumn.swift; sourceTree = "<group>"; };
+		840C70952F8B67E4008D26EA /* MermaidPreviewPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MermaidPreviewPane.swift; sourceTree = "<group>"; };
+		840C70972F8B6801008D26EA /* StudioBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioBanner.swift; sourceTree = "<group>"; };
+		840C70992F8B6838008D26EA /* StudioEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudioEmptyState.swift; sourceTree = "<group>"; };
+		840C709C2F8B685B008D26EA /* PreviewToolOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewToolOverlay.swift; sourceTree = "<group>"; };
+		840C709E2F8B6865008D26EA /* PreviewClickCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewClickCaptureView.swift; sourceTree = "<group>"; };
+		840C70A02F8B6877008D26EA /* PreviewCaptureNSView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewCaptureNSView.swift; sourceTree = "<group>"; };
+		840C70A22F8B68AA008D26EA /* PreviewShortcutMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewShortcutMonitor.swift; sourceTree = "<group>"; };
+		840C70A42F8B68C1008D26EA /* DocumentBottomPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentBottomPanel.swift; sourceTree = "<group>"; };
+		840C70A62F8B68D4008D26EA /* PreviewGridBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewGridBackground.swift; sourceTree = "<group>"; };
+		840C70A82F8B68E5008D26EA /* DocumentInspectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentInspectorView.swift; sourceTree = "<group>"; };
+		840C70AA2F8B68F4008D26EA /* IconPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconPickerView.swift; sourceTree = "<group>"; };
+		840C70AC2F8B68FE008D26EA /* CategoryEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryEditorSheet.swift; sourceTree = "<group>"; };
+		840C70AE2F8B6907008D26EA /* ExportPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportPopoverView.swift; sourceTree = "<group>"; };
+		BA9B197859417D13CB50F894 /* index.html */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
 		BB197AE97E0D383BC24B96C6 /* StudioStores.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioStores.swift; sourceTree = "<group>"; };
-		D3C6E3654A21641A929ECA65 /* MermaidSourceEditing.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MermaidSourceEditing.swift; sourceTree = "<group>"; };
-		FFEA54B1AA557FAC2EA94CA9 /* StudioRepositories.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StudioRepositories.swift; sourceTree = "<group>"; };
+		FFEA54B1AA557FAC2EA94CA9 /* SwiftDataDiagramRepository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SwiftDataDiagramRepository.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +160,6 @@
 				BA9B197859417D13CB50F894 /* index.html */,
 				04CFF2D6D2EC9249EF0FD9DF /* mermaid.min.js */,
 			);
-			name = Resources;
 			path = Resources;
 			sourceTree = "<group>";
 		};
@@ -81,17 +178,114 @@
 				28A60C36157EEE6C8A0E13A4 /* ContentView.swift */,
 				46C771A114AA629E0008B1FA /* MeriqApp.swift */,
 				16E5CD0A225AAEF73C2D03E7 /* MermaidConfiguration.swift */,
+				840C70792F8B66B5008D26EA /* Extensions */,
+				840C70752F8B6650008D26EA /* MermaidExportOptions.swift */,
+				840C70732F8B663D008D26EA /* MermaidPreviewPalette.swift */,
+				840C70712F8B6634008D26EA /* MermaidDiagramPalette.swift */,
+				840C706F2F8B6623008D26EA /* MermaidThemePreset.swift */,
 				12DB573CC438E91AED971FE0 /* MermaidRenderEngine.swift */,
 				7B370830A6CD31D605AD4147 /* MermaidRenderer.swift */,
-				D3C6E3654A21641A929ECA65 /* MermaidSourceEditing.swift */,
-				3DAA583FE55FB9A578F6B766 /* StudioModels.swift */,
-				374F96CA25AB467711B078F3 /* StudioPersistence.swift */,
-				FFEA54B1AA557FAC2EA94CA9 /* StudioRepositories.swift */,
+				840C706E2F8B6605008D26EA /* Edit */,
+				840C70572F8B60CE008D26EA /* Domain */,
+				840C70482F8B6023008D26EA /* Data */,
+				840C707A2F8B66C9008D26EA /* Repository */,
 				BB197AE97E0D383BC24B96C6 /* StudioStores.swift */,
-				AE7B8E329E092AE74470BB57 /* StudioViews.swift */,
+				840C70422F8B5F25008D26EA /* LibraryStore.swift */,
+				840C709B2F8B684D008D26EA /* Views */,
+				840C707F2F8B6730008D26EA /* PreviewToolCursor.swift */,
+				840C707D2F8B671B008D26EA /* StudioChrome.swift */,
+				840C707B2F8B6701008D26EA /* RootStudioView.swift */,
 			);
 			name = Meriq;
 			path = Sources/Meriq;
+			sourceTree = "<group>";
+		};
+		840C70482F8B6023008D26EA /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				374F96CA25AB467711B078F3 /* DiagramEntity.swift */,
+				840C70462F8B5FEA008D26EA /* CategoryEntity.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		840C70572F8B60CE008D26EA /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				840C70622F8B613C008D26EA /* SidebarSelection.swift */,
+				840C70602F8B612C008D26EA /* WorkspaceMode.swift */,
+				840C705E2F8B6120008D26EA /* PreviewToolMode.swift */,
+				840C705C2F8B6114008D26EA /* DiagramScope.swift */,
+				840C705A2F8B60FF008D26EA /* MermaidStudioSymbols.swift */,
+				840C70582F8B60F7008D26EA /* MermaidStudioTemplates.swift */,
+				840C70552F8B6071008D26EA /* DiagramDraft.swift */,
+				840C70532F8B6069008D26EA /* DiagramTemplate.swift */,
+				840C70512F8B6060008D26EA /* DiagramPreviewZoomState.swift */,
+				840C704F2F8B6059008D26EA /* MermaidExportConfiguration.swift */,
+				840C704D2F8B604E008D26EA /* SidebarDiagramSection.swift */,
+				840C704B2F8B6047008D26EA /* Category.swift */,
+				840C70492F8B603C008D26EA /* Diagram.swift */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		840C706E2F8B6605008D26EA /* Edit */ = {
+			isa = PBXGroup;
+			children = (
+				840C706C2F8B65F3008D26EA /* MermaidEditableTokenKind.swift */,
+				840C706A2F8B65EA008D26EA /* MermaidEditableToken.swift */,
+				840C70682F8B65DD008D26EA /* MermaidPreviewEditRequest.swift */,
+				840C70662F8B65CF008D26EA /* MermaidSourceEditResult.swift */,
+				840C70642F8B6581008D26EA /* MermaidSourceEditingEngine.swift */,
+			);
+			path = Edit;
+			sourceTree = "<group>";
+		};
+		840C70792F8B66B5008D26EA /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				840C70772F8B6670008D26EA /* NSColor+Utils.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		840C707A2F8B66C9008D26EA /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				FFEA54B1AA557FAC2EA94CA9 /* SwiftDataDiagramRepository.swift */,
+				840C70442F8B5F7F008D26EA /* SwiftDataCategoryRepository.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		840C709B2F8B684D008D26EA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				840C70AE2F8B6907008D26EA /* ExportPopoverView.swift */,
+				840C70AC2F8B68FE008D26EA /* CategoryEditorSheet.swift */,
+				840C70AA2F8B68F4008D26EA /* IconPickerView.swift */,
+				840C70A82F8B68E5008D26EA /* DocumentInspectorView.swift */,
+				840C70A62F8B68D4008D26EA /* PreviewGridBackground.swift */,
+				840C70A42F8B68C1008D26EA /* DocumentBottomPanel.swift */,
+				840C70A22F8B68AA008D26EA /* PreviewShortcutMonitor.swift */,
+				840C70A02F8B6877008D26EA /* PreviewCaptureNSView.swift */,
+				840C709E2F8B6865008D26EA /* PreviewClickCaptureView.swift */,
+				840C709C2F8B685B008D26EA /* PreviewToolOverlay.swift */,
+				840C70992F8B6838008D26EA /* StudioEmptyState.swift */,
+				840C70972F8B6801008D26EA /* StudioBanner.swift */,
+				840C70952F8B67E4008D26EA /* MermaidPreviewPane.swift */,
+				840C70932F8B67D5008D26EA /* PreviewDetailColumn.swift */,
+				840C70912F8B67CD008D26EA /* MermaidEditorView.swift */,
+				840C708F2F8B67BF008D26EA /* StudioWorkspaceContainer.swift */,
+				840C708D2F8B67A6008D26EA /* TemplateListView.swift */,
+				840C708B2F8B679B008D26EA /* TemplateWorkspaceView.swift */,
+				840C70892F8B678E008D26EA /* SidebarDiagramButton.swift */,
+				840C70872F8B6781008D26EA /* SidebarInlineBrowser.swift */,
+				840C70852F8B6776008D26EA /* SidebarCategoryButton.swift */,
+				840C70832F8B6765008D26EA /* SidebarScopeButton.swift */,
+				840C70812F8B6747008D26EA /* StudioSidebarView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		89EB710A9A04B99D7D305B9E = {
@@ -150,6 +344,7 @@
 				TargetAttributes = {
 					4F521F91F41F1F6C6B4516BA = {
 						CreatedOnToolsVersion = 26.4;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -162,8 +357,6 @@
 				Base,
 			);
 			mainGroup = 89EB710A9A04B99D7D305B9E;
-			minimizedProjectReferenceProxies = 0;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = 4C5C27FF56F3853C22D7A300 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -192,16 +385,65 @@
 			buildActionMask = 2147483647;
 			files = (
 				2FFCFBFC3D55F78AAEAEE21B /* ContentView.swift in Sources */,
+				840C709D2F8B685B008D26EA /* PreviewToolOverlay.swift in Sources */,
+				840C70862F8B6776008D26EA /* SidebarCategoryButton.swift in Sources */,
+				840C70702F8B6623008D26EA /* MermaidThemePreset.swift in Sources */,
+				840C705B2F8B60FF008D26EA /* MermaidStudioSymbols.swift in Sources */,
+				840C70842F8B6765008D26EA /* SidebarScopeButton.swift in Sources */,
 				8F018D961FB1CD7F3A6B616B /* MeriqApp.swift in Sources */,
+				840C70472F8B5FEA008D26EA /* CategoryEntity.swift in Sources */,
+				840C70AF2F8B6907008D26EA /* ExportPopoverView.swift in Sources */,
+				840C70A52F8B68C1008D26EA /* DocumentBottomPanel.swift in Sources */,
+				840C70742F8B663D008D26EA /* MermaidPreviewPalette.swift in Sources */,
+				840C708C2F8B679B008D26EA /* TemplateWorkspaceView.swift in Sources */,
+				840C70802F8B6730008D26EA /* PreviewToolCursor.swift in Sources */,
 				0A2C0F46E506E6E0D79ED490 /* MermaidConfiguration.swift in Sources */,
+				840C706B2F8B65EA008D26EA /* MermaidEditableToken.swift in Sources */,
+				840C70432F8B5F25008D26EA /* LibraryStore.swift in Sources */,
+				840C707E2F8B671B008D26EA /* StudioChrome.swift in Sources */,
+				840C70A72F8B68D4008D26EA /* PreviewGridBackground.swift in Sources */,
 				F22F00A7B4606055BF0FA169 /* MermaidRenderEngine.swift in Sources */,
 				49A4E2C8EA46CFAD1C42371C /* MermaidRenderer.swift in Sources */,
-				B6A17F66FDBB4B9D8B181D25 /* MermaidSourceEditing.swift in Sources */,
-				3928900793D04E39C073A546 /* StudioModels.swift in Sources */,
-				F68B33AD63A04AECFB67463E /* StudioPersistence.swift in Sources */,
-				B5B8C096BE534E13D5411359 /* StudioRepositories.swift in Sources */,
+				840C70A92F8B68E5008D26EA /* DocumentInspectorView.swift in Sources */,
+				840C705F2F8B6120008D26EA /* PreviewToolMode.swift in Sources */,
+				840C70672F8B65CF008D26EA /* MermaidSourceEditResult.swift in Sources */,
+				840C704C2F8B6047008D26EA /* Category.swift in Sources */,
+				840C70982F8B6801008D26EA /* StudioBanner.swift in Sources */,
+				840C70A32F8B68AA008D26EA /* PreviewShortcutMonitor.swift in Sources */,
+				840C707C2F8B6701008D26EA /* RootStudioView.swift in Sources */,
+				840C70AD2F8B68FE008D26EA /* CategoryEditorSheet.swift in Sources */,
+				840C709A2F8B6838008D26EA /* StudioEmptyState.swift in Sources */,
+				840C706D2F8B65F3008D26EA /* MermaidEditableTokenKind.swift in Sources */,
+				840C704A2F8B603C008D26EA /* Diagram.swift in Sources */,
+				840C70612F8B612C008D26EA /* WorkspaceMode.swift in Sources */,
+				840C70942F8B67D5008D26EA /* PreviewDetailColumn.swift in Sources */,
+				840C70592F8B60F7008D26EA /* MermaidStudioTemplates.swift in Sources */,
+				840C70AB2F8B68F4008D26EA /* IconPickerView.swift in Sources */,
+				F68B33AD63A04AECFB67463E /* DiagramEntity.swift in Sources */,
+				840C70A12F8B6877008D26EA /* PreviewCaptureNSView.swift in Sources */,
+				840C70902F8B67BF008D26EA /* StudioWorkspaceContainer.swift in Sources */,
+				840C70522F8B6060008D26EA /* DiagramPreviewZoomState.swift in Sources */,
+				840C70922F8B67CD008D26EA /* MermaidEditorView.swift in Sources */,
+				840C70562F8B6071008D26EA /* DiagramDraft.swift in Sources */,
+				840C70692F8B65DD008D26EA /* MermaidPreviewEditRequest.swift in Sources */,
+				840C70542F8B6069008D26EA /* DiagramTemplate.swift in Sources */,
+				840C70652F8B6581008D26EA /* MermaidSourceEditingEngine.swift in Sources */,
+				840C70502F8B6059008D26EA /* MermaidExportConfiguration.swift in Sources */,
+				840C709F2F8B6865008D26EA /* PreviewClickCaptureView.swift in Sources */,
+				840C708E2F8B67A6008D26EA /* TemplateListView.swift in Sources */,
+				840C708A2F8B678E008D26EA /* SidebarDiagramButton.swift in Sources */,
+				840C70882F8B6781008D26EA /* SidebarInlineBrowser.swift in Sources */,
+				B5B8C096BE534E13D5411359 /* SwiftDataDiagramRepository.swift in Sources */,
+				840C70822F8B6747008D26EA /* StudioSidebarView.swift in Sources */,
+				840C70962F8B67E4008D26EA /* MermaidPreviewPane.swift in Sources */,
+				840C70722F8B6634008D26EA /* MermaidDiagramPalette.swift in Sources */,
 				296C8B3AC26F33014B5C9CB4 /* StudioStores.swift in Sources */,
-				648DC2B14241A2DD0447186F /* StudioViews.swift in Sources */,
+				840C70762F8B6650008D26EA /* MermaidExportOptions.swift in Sources */,
+				840C705D2F8B6114008D26EA /* DiagramScope.swift in Sources */,
+				840C70782F8B6670008D26EA /* NSColor+Utils.swift in Sources */,
+				840C70632F8B613C008D26EA /* SidebarSelection.swift in Sources */,
+				840C704E2F8B604E008D26EA /* SidebarDiagramSection.swift in Sources */,
+				840C70452F8B5F7F008D26EA /* SwiftDataCategoryRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,8 +546,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 6.0;
 			};
 			name = Release;

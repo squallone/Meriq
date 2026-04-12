@@ -1,31 +1,10 @@
+//
+//  MermaidSourceEditingEngine.swift
+//  Meriq
+//
+//  Created by Admin on 11/04/26.
+//
 import Foundation
-
-enum MermaidEditableTokenKind: String, Codable, Equatable {
-    case nodeLabel
-    case edgeLabel
-}
-
-struct MermaidEditableToken: Identifiable, Codable, Equatable {
-    let id: String
-    let kind: MermaidEditableTokenKind
-    let line: Int
-    let utf16Offset: Int
-    let utf16Length: Int
-    let text: String
-    let normalizedText: String
-    let sourceIdentifier: String?
-    let closingDelimiter: String
-}
-
-struct MermaidPreviewEditRequest: Codable, Equatable {
-    let tokenID: String
-    let newText: String
-}
-
-struct MermaidSourceEditResult: Equatable {
-    let updatedSource: String
-    let editedToken: MermaidEditableToken
-}
 
 struct MermaidSourceEditingEngine {
     func editableTokens(in source: String) -> [MermaidEditableToken] {
